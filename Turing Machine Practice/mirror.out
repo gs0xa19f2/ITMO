@@ -1,0 +1,44 @@
+start: moveRight
+accept: ac
+reject: rj
+blank: _
+
+moveRight 0 -> moveRight 0 >
+moveRight 1 -> moveRight 1 >
+moveRight _ -> gotoStart _ <
+
+gotoStart 0 -> copy0 X >
+gotoStart 1 -> copy1 Y >
+gotoStart X -> gotoStart X <
+gotoStart Y -> gotoStart Y <
+gotoStart _ -> back _ >
+
+copy0 0 -> copy0 0 >
+copy0 1 -> copy0 1 >
+copy0 X -> copy0 X >
+copy0 Y -> copy0 Y >
+copy0 _ -> returnToCopy 0 <
+
+copy1 0 -> copy1 0 >
+copy1 1 -> copy1 1 >
+copy1 X -> copy1 X >
+copy1 Y -> copy1 Y >
+copy1 _ -> returnToCopy 1 <
+
+returnToCopy 0 -> returnToCopy 0 <
+returnToCopy 1 -> returnToCopy 1 <
+returnToCopy X -> gotoStart X <
+returnToCopy Y -> gotoStart Y <
+returnToCopy _ -> back _ >
+
+back 0 -> moveToLeftEnd 0 <
+back 1 -> moveToLeftEnd 1 <
+back X -> back 0 >
+back Y -> back 1 >
+back _ -> moveToLeftEnd _ <
+
+moveToLeftEnd 0 -> moveToLeftEnd 0 <
+moveToLeftEnd 1 -> moveToLeftEnd 1 <
+moveToLeftEnd _ -> ac _ >
+
+

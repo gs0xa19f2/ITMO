@@ -1,0 +1,15 @@
+placeRight L _ 1 -> placeRight L ^ _ > 1 <
+placeRight L _ 0 -> placeRight L ^ _ > 0 <
+placeRight L X 0 -> placeRight L ^ 0 > 0 <
+placeRight L X 1 -> placeRight L ^ 0 > 1 <
+placeRight L Y 0 -> placeRight L ^ 1 > 0 <
+placeRight L Y 1 -> placeRight L ^ 1 > 1 <
+placeRight L X _ -> placeRight L ^ 0 > _ ^
+placeRight L Y _ -> placeRight L ^ 1 > _ ^
+placeRight L X Y -> placeRight L ^ 0 > 1 >
+placeRight L X X -> placeRight L ^ 0 > 0 >
+placeRight L Y X -> placeRight L ^ 1 > 0 >
+placeRight L Y Y -> placeRight L ^ 1 > 1 >
+placeRight L | 0 -> placeRight L ^ | ^ 0 <
+placeRight L | 1 -> placeRight L ^ | ^ 1 <
+placeRight L | _ -> placingRight L ^ | > _ >

@@ -1,0 +1,66 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 0 -> Nev X >
+s 1 -> Nev Y >
+
+Ev 0 -> Nev 0 >
+Ev 1 -> Nev 1 >
+Ev _ -> Rr _ <
+
+Nev 0 -> Ev 0 >
+Nev 1 -> Ev 1 >
+Nev _ -> rj _ <
+
+Rr 0 -> ToL X <
+Rr 1 -> ToL Y <
+
+ToL 0 -> ToL 0 <
+ToL 1 -> ToL 1 <
+ToL X -> Lr X >
+ToL Y -> Lr Y >
+ToL _ -> Lr _ >
+
+Lr 0 -> ToR X >
+Lr 1 -> ToR Y >
+Lr X -> ToLX 0 <
+Lr Y -> ToLY 1 <
+
+ToR 0 -> ToR 0 >
+ToR 1 -> ToR 1 >
+ToR X -> Rr X <
+ToR Y -> Rr Y <
+ToR _ -> Rr _ <
+
+ToLY 0 -> ToLY 0 <
+ToLY 1 -> ToLY 1 <
+ToLY X -> ToLY X < 
+ToLY Y -> ToLY Y <
+ToLY _ -> CheckY _ >
+
+ToLX 0 -> ToLX 0 <
+ToLX 1 -> ToLX 1 <
+ToLX X -> ToLX X <
+ToLX Y -> ToLX Y <
+ToLX _ -> CheckX _ >
+
+CheckY X -> rj X >
+CheckY Y -> getNext _ >
+
+CheckX X -> getNext _ >
+CheckX Y -> rj X >
+
+getNext X -> getNext X >
+getNext Y -> getNext Y >
+getNext 1 -> prepare 1 >
+getNext 0 -> prepare 0 >
+
+prepare 0 -> prepare 0 >
+prepare 1 -> prepare 1 >
+prepare X -> ToLX 0 <
+prepare Y -> ToLY 1 <
+prepare _ -> ac _ >
+
+

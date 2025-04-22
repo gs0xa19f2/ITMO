@@ -1,0 +1,64 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 1 -> toRight 1 >
+s 0 -> toRight 0 >
+s X -> moveX _ >
+s Y -> moveY _ >
+s < -> rj < ^
+
+moveX X -> moveX X > 
+moveX Y -> moveX Y >
+moveX < -> checkX < >
+
+moveY X -> moveY X >
+moveY Y -> moveY Y >
+moveY < -> checkY < >
+
+checkX 0 -> checkX 0 >
+checkX 1 -> checkX 1 >
+checkX X -> getLeft 0 <
+checkX Y -> ac Y ^
+
+checkY 0 -> checkY 0 >
+checkY 1 -> checkY 1 >
+checkY X -> rj X ^
+checkY Y -> getLeft 1 <
+
+toRight 0 -> toRight 0 >
+toRight 1 -> toRight 1 >
+toRight < -> toRight < > 
+toRight _ -> Rr _ <
+toRight X -> Rr X <
+toRight Y -> Rr Y <
+
+Rr 0 -> toLeft X <
+Rr 1 -> toLeft Y <
+Rr < -> checkLenLeft < <
+
+toLeft _ -> Lr _ >
+toLeft 0 -> toLeft 0 <
+toLeft 1 -> toLeft 1 <
+toLeft < -> toLeft < <
+toLeft X -> Lr X >
+toLeft Y -> Lr Y >
+
+checkLenLeft 0 -> rj 0 ^
+checkLenLeft 1 -> rj 0 ^
+checkLenLeft X -> getLeft X <
+checkLenLeft Y -> getLeft Y <
+
+getLeft X -> getLeft X <
+getLeft Y -> getLeft Y <
+getLeft < -> getLeft < <
+getLeft _ -> s _ >
+getLeft 1 -> getLeft 1 <
+getLeft 0 -> getLeft 0 <
+
+Lr 0 -> toRight X >
+Lr 1 -> toRight Y >
+Lr < -> ac < ^
+
+  

@@ -1,0 +1,228 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+   
+s 0 -> s X >
+s 1 -> s Y > 
+s _ -> copy* * <
+   
+copy* Y -> copy* Y <
+copy* X -> copy* X <
+copy* 1 -> copy* 1 <
+copy* 0 -> copy* 0 <
+copy* * -> copy* * <
+copy* _ -> copying* _ >
+   
+copying* X -> copyingX* 0 >
+copying* Y -> copyingY* 1 >
+copying* 0 -> copying* 0 >
+copying* 1 -> copying* 1 >
+copying* * -> sub* * >
+   
+copyingX* X -> copyingX* X >
+copyingX* Y -> copyingX* Y >
+copyingX* * -> copyingX* * >
+copyingX* 1 -> copyingX* 1 >
+copyingX* 0 -> copyingX* 0 >
+copyingX* _ -> copy* 0 < 
+   
+copyingY* X -> copyingY* X >
+copyingY* Y -> copyingY* Y >
+copyingY* * -> copyingY* * >
+copyingY* 1 -> copyingY* 1 >
+copyingY* 0 -> copyingY* 0 >
+copyingY* _ -> copy* 1 < 
+   
+sub* 1 -> sub* 1 >
+sub* 0 -> sub* 0 >
+sub* _ -> subing* $ <
+   
+subing* 1 -> toLeft 0 <
+subing* 0 -> subing* 1 <
+subing* * -> zeroSpecial * >
+   
+zeroSpecial 1 -> zeroSpecial * >
+zeroSpecial $ -> zeroSpecial * > 
+zeroSpecial _ -> cleanZeroSpecial _ <
+   
+cleanZeroSpecial * -> cleanZeroSpecial _ <
+cleanZeroSpecial 0 -> ac 1 ^
+   
+toLeft 0 -> toLeft 0 <
+toLeft 1 -> toLeft 1 < 
+toLeft A -> toLeft 0 <
+toLeft Z -> toLeft 1 <
+toLeft * -> toLeft * <
+toLeft $ -> toLeft $ <
+toLeft X -> copy$ X >
+toLeft Y -> copy$ Y >
+toLeft _ -> copy$ _ >
+   
+copy$ 0 -> copyingX$ X >
+copy$ 1 -> copyingY$ Y >
+copy$ * -> clearLeft * <
+   
+copyingX$ 0 -> copyingX$ 0 >
+copyingX$ 1 -> copyingX$ 1 >
+copyingX$ * -> copyingX$ * >
+copyingX$ $ -> copyingX$ $ >
+copyingX$ _ -> toLeft 0 <
+   
+copyingY$ 0 -> copyingY$ 0 >
+copyingY$ 1 -> copyingY$ 1 >
+copyingY$ * -> copyingY$ * >
+copyingY$ $ -> copyingY$ $ >
+copyingY$ _ -> toLeft 1 <
+   
+clearLeft X -> clearLeft Z <
+clearLeft Y -> clearLeft Z <
+clearLeft _ -> clearingLeft _ >
+   
+clearingLeft Z -> clearingLeft _ >
+clearingLeft * -> placeZero * <
+   
+placeZero _ -> check$ 0 >
+   
+check$ 0 -> check$ 0 >
+check$ 1 -> check$ 1 >
+check$ * -> check$ * >
+check$ # -> check$ # >
+check$ % -> check$ % >
+check$ A -> checkMultiplier A <
+check$ Z -> checkMultiplier Z <
+check$ $ -> checkMultiplier $ <
+   
+checkMultiplier A -> checkMultiplier A <
+checkMultiplier Z -> checkMultiplier Z <
+checkMultiplier * -> nextIt * <
+checkMultiplier 0 -> addRank A <
+checkMultiplier 1 -> sumRightLeft 1 >
+   
+nextIt # -> nextIt 0 <
+nextIt % -> nextIt 1 <
+nextIt 1 -> prepareRight 1 >
+nextIt 0 -> prepareRight 0 >
+nextIt _ -> fin _ >
+   
+fin 0 -> fin _ >
+fin 1 -> fin _ >
+fin * -> fin _ >
+fin A -> fin _ >
+fin Z -> fin _ >
+fin $ -> ac _ >
+   
+prepareRight 0 -> prepareRight 0 >
+prepareRight 1 -> prepareRight 1 >
+prepareRight * -> prepareRight * >
+prepareRight Z -> prepareRight 1 >
+prepareRight A -> prepareRight 0 > 
+prepareRight $ -> clearRight $ >
+   
+clearRight 1 -> clearRight Z >
+clearRight 0 -> clearRight Z >
+clearRight _ -> clearingRight _ <
+   
+clearingRight Z -> clearingRight _ <
+clearingRight $ -> subing* $ <
+   
+addRank 0 -> addRank 0 <
+addRank 1 -> addRank 1 <
+addRank * -> addingRank * <
+   
+addingRank # -> addingRank # <
+addingRank % -> addingRank % <
+addingRank X -> normalizeLeft # <
+addingRank Y -> normalizeLeft % <
+addingRank _ -> check$ # >
+addingRank 0 -> check$ # >
+addingRank 1 -> check$ % > 
+   
+normalizeLeft X -> normalizeLeft 0 <
+normalizeLeft Y -> normalizeLeft 1 <
+normalizeLeft 0 -> normalizeRight 0 >
+normalizeLeft 1 -> normalizeRight 1 >
+normalizeLeft _ -> normalizeRight _ >
+   
+normalizeRight 1 -> normalizeRight 1 >
+normalizeRight 0 -> normalizeRight 0 >
+normalizeRight * -> normalizeRight * >
+normalizeRight # -> normalizeRight # >
+normalizeRight % -> normalizeRight % >
+normalizeRight A -> normalizeRight A >
+normalizeRight Z -> normalizeRight Z >
+normalizeRight $ -> normalizeRight $ >
+normalizeRight Q -> normalizeRight 0 >
+normalizeRight W -> normalizeRight 1 > 
+normalizeRight _ -> to$ _ <
+   
+to$ 0 -> to$ 0 <
+to$ 1 -> to$ 1 <
+to$ $ -> checkMultiplier $ <
+   
+sumRightLeft A -> sumRightLeft A >
+sumRightLeft Z -> sumRightLeft Z >
+sumRightLeft $ -> sumRightLeft $ >
+sumRightLeft 0 -> sumRightLeft 0 >
+sumRightLeft 1 -> sumRightLeft 1 >
+sumRightLeft # -> sumRightLeft # >
+sumRightLeft % -> sumRightLeft % >
+sumRightLeft * -> sumRightLeft * >
+sumRightLeft X -> sumRightLeft X >
+sumRightLeft Y -> sumRightLeft Y >
+sumRightLeft W -> summingRightLeft W <
+sumRightLeft Q -> summingRightLeft Q <
+sumRightLeft _ -> summingRightLeft _ <
+   
+summingRightLeft 0 -> addZeroLeft Q <
+summingRightLeft 1 -> addOneLeft W <
+summingRightLeft $ -> nextRank $ <
+   
+nextRank 1 -> addRankOne Z <
+nextRank Z -> nextRank Z <
+nextRank 0 -> addRankOne A <
+nextRank A -> nextRank A <
+nextRank * -> nextIt * >
+   
+addRankOne 0 -> addRankOne 0 < 
+addRankOne 1 -> addRankOne 1 <
+addRankOne * -> addingRankOne * <
+   
+addingRankOne # -> addingRankOne # <
+addingRankOne % -> addingRankOne % <
+addingRankOne X -> normalizeLeft # <
+addingRankOne Y -> normalizeLeft % <
+   
+addZeroLeft $ -> addZeroLeft $ <
+addZeroLeft 0 -> addZeroLeft 0 <
+addZeroLeft 1 -> addZeroLeft 1 < 
+addZeroLeft A -> addZeroLeft A <
+addZeroLeft Z -> addZeroLeft Z <
+addZeroLeft * -> addingZeroLeft * <
+   
+addOneLeft $ -> addOneLeft $ <
+addOneLeft 0 -> addOneLeft 0 <
+addOneLeft 1 -> addOneLeft 1 < 
+addOneLeft A -> addOneLeft A <
+addOneLeft Z -> addOneLeft Z <
+addOneLeft * -> addingOneLeft * <
+   
+addingZeroLeft # -> addingZeroLeft # <
+addingZeroLeft % -> addingZeroLeft % <
+addingZeroLeft Y -> addingZeroLeft Y <
+addingZeroLeft X -> addingZeroLeft X <
+addingZeroLeft 0 -> sumRightLeft X >
+addingZeroLeft 1 -> sumRightLeft Y >
+addingZeroLeft _ -> sumRightLeft X >
+   
+addingOneLeft # -> addingOneLeft # <
+addingOneLeft % -> addingOneLeft % <
+addingOneLeft 1 -> addingOneLeft' X <
+addingOneLeft X -> addingOneLeft X <
+addingOneLeft Y -> addingOneLeft Y <
+addingOneLeft 0 -> sumRightLeft Y >
+addingOneLeft _ -> sumRightLeft Y >
+   
+addingOneLeft' 0 -> sumRightLeft 1 >
+addingOneLeft' _ -> sumRightLeft 1 >
+addingOneLeft' 1 -> addingOneLeft' 0 <

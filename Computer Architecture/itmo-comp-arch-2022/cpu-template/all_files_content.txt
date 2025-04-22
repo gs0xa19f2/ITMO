@@ -1,0 +1,302 @@
+===== ./all_files_content.txt =====
+
+
+===== ./collector.bash =====
+#!/bin/bash
+
+# Имя файла, в который будет записываться весь контент
+output_file="all_files_content.txt"
+
+# Очищаем файл, если он уже существует
+> "$output_file"
+
+# Функция для рекурсивного обхода директорий
+process_directory() {
+    for file in "$1"/*; do
+        if [ -d "$file" ]; then
+            # Если это директория, рекурсивно обрабатываем её
+            process_directory "$file"
+        elif [ -f "$file" ]; then
+            # Пропускаем файлы с расширениями .class, .jar, .jpg, .png и .pp
+            if [[ "$file" != *.class && "$file" != *.jar && "$file" != *.jpg && "$file" != *.png && "$file" != *.pp ]]; then
+                # Если это файл, добавляем его имя и содержимое в итоговый файл
+                echo "===== $file =====" >> "$output_file"
+                cat "$file" >> "$output_file"
+                echo -e "\n" >> "$output_file"
+            fi
+        fi
+    done
+}
+
+# Начинаем с текущей директории или директории, переданной первым аргументом
+start_dir="${1:-.}"
+
+# Запускаем обработку
+process_directory "$start_dir"
+
+echo "Содержимое всех файлов записано в $output_file."
+
+
+
+===== ./cpu_test.v =====
+`include "mips_cpu.v"
+`include "memory.v"
+`include "register_file.v"
+`include "d_flop.v"
+
+module cpu_test();
+  reg clk;
+
+  // Инициализируем процессор
+  wire [31:0] instruction_memory_a, instruction_memory_rd;
+
+  instruction_memory cpu_instruction_memory(.a(instruction_memory_a), .rd(instruction_memory_rd));
+
+  wire data_memory_we;
+  wire [31:0] data_memory_a, data_memory_rd, data_memory_wd;
+  wire [31:0] pc, pc_new;
+
+  d_flop program_counter(.d(pc_new), .clk(clk), .q(pc));
+
+  data_memory cpu_data_memory(.a(data_memory_a), .we(data_memory_we), .clk(clk), .wd(data_memory_wd), .rd(data_memory_rd));
+
+  wire register_we3;
+  wire [4:0] register_a1, register_a2, register_a3;
+  wire [31:0] register_rd1, register_rd2, register_wd3;
+
+  register_file cpu_register(.clk(clk),
+                             .we3(register_we3),
+                             .a1(register_a1),
+                             .a2(register_a2),
+                             .a3(register_a3),
+                             .wd3(register_wd3),
+                             .rd1(register_rd1),
+                             .rd2(register_rd2));
+
+  mips_cpu cpu(.clk(clk),
+               .pc(pc),
+               .pc_new(pc_new),
+               .instruction_memory_a(instruction_memory_a),
+               .instruction_memory_rd(instruction_memory_rd),
+               .data_memory_a(data_memory_a),
+               .data_memory_rd(data_memory_rd),
+               .data_memory_we(data_memory_we),
+               .data_memory_wd(data_memory_wd),
+               .register_a1(register_a1),
+               .register_a2(register_a2),
+               .register_a3(register_a3),
+               .register_we3(register_we3),
+               .register_wd3(register_wd3),
+               .register_rd1(register_rd1),
+               .register_rd2(register_rd2));
+
+  // Testbench
+  reg [31:0] i_counter, reg_counter, mem_counter;
+  initial begin
+    // Выполняем 30 тактов
+    for (i_counter = 0; i_counter < 30; i_counter = i_counter + 1) begin
+      #5
+      clk = 1;
+      #5
+      clk = 0;
+    end
+    // Дампим регистры
+    for (reg_counter = 0; reg_counter < 32; reg_counter = reg_counter + 1) begin
+      $display("Register: %d, value: %d", reg_counter, cpu_register.mem[reg_counter]);
+    end
+    // Дампим память данных
+    for (mem_counter = 0; mem_counter < 64; mem_counter = mem_counter + 1) begin
+      $display("Addr: %d, value: %d", mem_counter * 4, cpu_data_memory.ram[mem_counter]);
+    end
+  end
+endmodule
+
+
+===== ./d_flop.v =====
+module d_flop(d, clk, q);
+  // данные для записи в регистр
+  input [31:0] d;
+  // сигнал синхронизации
+  input clk;
+
+  // сам регистр
+  output reg [31:0] q;
+
+  // изначально заполнен нулем
+  initial begin
+    q <= 32'b0;
+  end
+
+  // запись на фронте сигнала синхронизации
+  always @ (posedge clk)
+    q <= d;
+endmodule
+
+
+===== ./memory.v =====
+module data_memory(a, we, clk, wd, rd);
+  // we - флаг записи
+  // clk - сигнал синхронизации
+  input we, clk;
+  // адрес, к которому происходит обращение
+  input [31:0] a;
+  // данные для записи
+  input [31:0] wd;
+  // данные, полученные в результате чтения
+  output [31:0] rd;
+
+  // непосредственно память, 2048 ячеек по 32 бита
+  reg [31:0] ram[0:2047];
+
+  // изначально память заполняется нулями
+  integer i;
+  initial begin
+    for (i = 0; i < 2048; i = i + 1) begin
+      ram[i] = 0;
+   	end
+  end
+
+  // чтение происходит из элемента массива по a / 4, т.к.
+  // адресация побайтовая, а ячейки массива по 32 бита (4 байта)
+  assign rd = ram[a / 4];
+
+  // запись на фронте сигнала синхронизации
+  always @ (posedge clk) begin
+    // при we = 1
+    if (we) ram[a / 4] = wd;
+  end
+endmodule
+
+module instruction_memory(a, rd);
+  // адрес, к которому происходит обращение
+  input [31:0] a;
+  // данные, полученные в результате чтения
+  output [31:0] rd;
+  // непосредственно память, 64 ячейки по 32 бита
+  reg [31:0] ram[0:63];
+
+  // память заполняется двоичными данными из
+  // файла intructions.dat
+  initial begin
+    $readmemb("instructions.dat", ram);
+  end
+
+  // чтение происходит из элемента массива по a / 4, т.к.
+  // адресация побайтовая, а ячейки массива по 32 бита (4 байта)
+  assign rd = ram[a / 4];
+endmodule
+
+
+
+===== ./mips_cpu.v =====
+`include "util.v"
+
+module mips_cpu(clk, pc, pc_new, instruction_memory_a, instruction_memory_rd, data_memory_a, data_memory_rd, data_memory_we, data_memory_wd,
+                register_a1, register_a2, register_a3, register_we3, register_wd3, register_rd1, register_rd2);
+  // сигнал синхронизации
+  input clk;
+  // текущее значение регистра PC
+  inout [31:0] pc;
+  // новое значение регистра PC (адрес следующей команды)
+  output [31:0] pc_new;
+  // we для памяти данных
+  output data_memory_we;
+  // адреса памяти и данные для записи памяти данных
+  output [31:0] instruction_memory_a, data_memory_a, data_memory_wd;
+  // данные, полученные в результате чтения из памяти
+  inout [31:0] instruction_memory_rd, data_memory_rd;
+  // we3 для регистрового файла
+  output register_we3;
+  // номера регистров
+  output [4:0] register_a1, register_a2, register_a3;
+  // данные для записи в регистровый файл
+  output [31:0] register_wd3;
+  // данные, полученные в результате чтения из регистрового файла
+  inout [31:0] register_rd1, register_rd2;
+
+  // TODO: implementation
+endmodule
+
+
+===== ./register_file.v =====
+module register_file(clk, we3, a1, a2, a3, wd3, rd1, rd2);
+  // we3 - флаг записи регистра под номером a3
+  // clk - сигнал синхронизации
+  input clk, we3;
+  // номера регистров
+  // a1, a2 - номера регистров для чтения
+  // a3 - номер регистра для записи
+  input [4:0] a1, a2, a3;
+  // данные для записи в регистра с номером a3
+  input [31:0] wd3;
+  // данные, полученные в результате чтения
+  // из регистров с номерами a1 и a2
+  output [31:0] rd1, rd2;
+
+  // непосредственно регистры, 32 регистра по 32 бита
+  reg [31:0] mem[0:31];
+
+  // изначально регистры заполняются нулями
+  integer i;
+  initial begin
+    for (i = 0; i < 32; i = i + 1) begin
+      mem[i] = 0;
+   	end
+  end
+
+  // чтение регистров
+  assign rd1 = mem[a1];
+  assign rd2 = mem[a2];
+
+  // запись на фронте сигнала синхронизации
+  always @ (posedge clk) begin
+    // при we3 = 1
+    if (we3) mem[a3] = wd3;
+  end
+endmodule
+
+
+===== ./util.v =====
+// модуль, который реализует расширенение
+// 16-битной знаковой константы до 32-битной
+module sign_extend(in, out);
+  input [15:0] in;
+  output [31:0] out;
+
+  assign out = {{16{in[15]}}, in};
+endmodule
+
+// модуль, который реализует побитовый сдвиг числа
+// влево на 2 бита
+module shl_2(in, out);
+  input [31:0] in;
+  output [31:0] out;
+
+  assign out = {in[29:0], 2'b00};
+endmodule
+
+// 32 битный сумматор
+module adder(a, b, out);
+  input [31:0] a, b;
+  output [31:0] out;
+
+  assign out = a + b;
+endmodule
+
+// 32-битный мультиплексор
+module mux2_32(d0, d1, a, out);
+  input [31:0] d0, d1;
+  input a;
+  output [31:0] out;
+  assign out = a ? d1 : d0;
+endmodule
+
+// 5 - битный мультиплексор
+module mux2_5(d0, d1, a, out);
+  input [4:0] d0, d1;
+  input a;
+  output [4:0] out;
+  assign out = a ? d1 : d0;
+endmodule
+
+

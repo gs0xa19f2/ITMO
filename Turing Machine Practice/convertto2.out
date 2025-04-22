@@ -1,0 +1,51 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 0 -> s 0 <
+s 1 -> s 1 <
+s 2 -> s 2 <
+s _ -> toRight Z >
+
+toRight 0 -> toRight 0 >
+toRight 1 -> toRight 1 >
+toRight 2 -> toRight 2 >
+toRight Z -> toRight Z >
+toRight _ -> getOne _ <
+
+getOne 2 -> toLeft 1 <
+getOne 1 -> toLeft 0 <
+getOne 0 -> findOne 2 <
+
+toLeft 0 -> toLeft 0 <
+toLeft 1 -> toLeft 1 <
+toLeft 2 -> toLeft 2 <
+toLeft Z -> addOne Z <
+
+addOne 0 -> toRight 1 > 
+addOne 1 -> addOne 0 <
+addOne _ -> toRight 1 > 
+
+findOne 1 -> toLeft 0 <
+findOne 2 -> toLeft 1 <
+findOne 0 -> findOne 2 <
+findOne Z -> cleanTape Z >
+
+cleanTape 0 -> cleanTape 0 >
+cleanTape 1 -> cleanTape 1 >
+cleanTape 2 -> cleanTape 2 >
+cleanTape _ -> cleaning _ <
+
+cleaning 2 -> cleaning _ <
+cleaning Z -> finCheck 0 <
+
+finCheck _ -> ac _ >
+finCheck 0 -> Costyl 0 >
+finCheck 1 -> Costyl 1 >
+
+Costyl 0 -> fin _ <
+
+fin 0 -> fin 0 <
+fin 1 -> fin 1 <
+fin _ -> ac _ >

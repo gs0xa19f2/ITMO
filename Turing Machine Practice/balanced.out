@@ -1,0 +1,21 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s ) -> rj ) ^
+s ( -> findClosing O >
+s C -> s _ >
+s _ -> ac _ ^
+
+findClosing ( -> findClosing ( >
+findClosing C -> findClosing C >
+findClosing ) -> moveBack C <
+findClosing _ -> rj _ ^
+
+moveBack ) -> moveBack ) <
+moveBack ( -> moveBack ( <
+moveBack C -> moveBack C < 
+moveBack O -> s _ >
+
+

@@ -1,0 +1,55 @@
+2
+
+S 0 _ -> S _ > 0 >
+S 1 _ -> S _ > 1 >
+S o _ -> S _ > o >
+S ( _ -> S _ > ( >
+S ) _ -> ClBr _ ^ _ <
+S a _ -> and _ > _ <
+S _ _ -> fin _ < _ <
+
+and 1 0 -> S _ > 0 >
+and 1 1 -> S _ > 1 >
+and 0 1 -> S _ > 0 >
+and 0 0 -> S _ > 0 > 
+and ( 1 -> andBr _ > 1 >
+and ( 0 -> andBr _ > 0 >
+
+andBr 0 _ -> S 0 ^ a > 
+andBr 1 _ -> S 1 ^ a >
+andBr ( _ -> S ( ^ a >
+
+fin _ 1 -> fin 1 ^ _ <
+fin _ 0 -> fin 0 ^ _ <
+fin 1 o -> orOne _ ^ _ <
+fin 0 o -> orZero _ ^ _ <
+fin _ _ -> toFirst _ > _ >
+fin 0 _ -> AC 0 ^ _ ^
+fin 1 _ -> AC 1 ^ _ ^
+
+toFirst _ 0 -> AC 0 ^ _ ^
+toFirst _ 1 -> AC 1 ^ _ ^
+
+orOne _ 0 -> fin _ ^ 1 <
+orOne _ 1 -> fin _ ^ 1 <
+
+orZero _ 0 -> fin _ ^ 0 <
+orZero _ 1 -> fin _ ^ 1 <
+
+ClBr _ 1 -> ClBrOne _ ^ _ <
+ClBr _ 0 -> ClBr _ ^ _ <
+ClBr _ o -> ClBr _ ^ _ <
+ClBr _ ( -> S _ > 0 > 
+ClBr _ a -> andPrevZero _ ^ _ <
+
+ClBrOne _ 1 -> ClBrOne _ ^ _ <
+ClBrOne _ 0 -> ClBrOne _ ^ _ <
+ClBrOne _ o -> ClBrOne _ ^ _ <
+ClBrOne _ ( -> S _ > 1 >
+ClBrOne _ a -> andPrevOne _ ^ _ <
+
+andPrevZero _ 1 -> S _ > 0 >
+andPrevZero _ 0 -> S _ > 0 >
+
+andPrevOne _ 1 -> S _ > 1 >
+andPrevOne _ 0 -> S _ > 0 >

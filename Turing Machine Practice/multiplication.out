@@ -1,0 +1,172 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+  
+s 0 -> s 0 >
+s 1 -> s 1 > 
+s * -> firstSub * >
+  
+firstSub 1 -> firstSub 1 >
+firstSub 0 -> firstSub 0 >
+firstSub _ -> firstSR _ <
+  
+firstSR 0 -> firstSR 1 <
+firstSR 1 -> place$ 0 >
+firstSR * -> cleanTapeZero * >
+
+cleanTapeZero 0 -> cleanTapeZero 0 >
+cleanTapeZero 1 -> cleanTapeZero 1 >
+cleanTapeZero _ -> cleaningZero _ <
+
+cleaningZero 0 -> cleaningZero _ <
+cleaningZero 1 -> cleaningZero _ <
+cleaningZero * -> cleaningZero _ <
+cleaningZero _ -> ac 0 ^
+  
+place$ 0 -> place$ 0 >
+place$ 1 -> place$ 1 >
+place$ * -> place$ * >
+place$ _ -> goBack $ <
+  
+place# 0 -> place# 0 >
+place# 1 -> place# 1 >
+place# $ -> place# $ >
+place# * -> place# * >
+place# _ -> goBack # <
+place# # -> checkMultiplier # <
+  
+moveNext 1 -> copyOne Y >
+moveNext 0 -> copyZero X >
+moveNext * -> toNormal * <
+  
+toNormal Y -> toNormal 1 <
+toNormal X -> toNormal 0 <
+toNormal # -> toNormal # <
+toNormal _ -> place# _ >
+toNormal $ -> subOne $ <
+  
+copyOne 0 -> copyOne 0 >
+copyOne 1 -> copyOne 1 >
+copyOne * -> placeOne * >
+  
+copyZero 0 -> copyZero 0 >
+copyZero 1 -> copyZero 1 >
+copyZero * -> placeZero * >
+  
+placeOne 1 -> placeOne 1 >
+placeOne 0 -> placeOne 0 >
+placeOne $ -> placeOne $ >
+placeOne _ -> goBack 1 <
+placeOne # -> placeOne # > 
+  
+placeZero 1 -> placeZero 1 >
+placeZero 0 -> placeZero 0 >
+placeZero $ -> placeZero $ >
+placeZero _ -> goBack 0 <
+placeZero # -> placeZero # >
+  
+goBack _ -> moveNext _ >
+goBack 1 -> goBack 1 <
+goBack 0 -> goBack 0 <
+goBack * -> goBack * <
+goBack $ -> goBack $ <
+goBack # -> goBack # <
+goBack X -> moveNext X >
+goBack Y -> moveNext Y > 
+  
+checkMultiplier 1 -> checkMultiplier 1 <
+checkMultiplier 0 -> checkMultiplier 0 <
+checkMultiplier # -> checkMultiplier # <
+checkMultiplier $ -> subOne $ <
+  
+subOne 0 -> subOne 1 <
+subOne 1 -> checkRight 0 >
+subOne * -> cleanTape * >
+  
+cleanTape 1 -> cleanTape * >
+cleanTape 0 -> cleanTape * >
+cleanTape # -> cleanTape * >
+cleanTape $ -> cleanTape * >
+cleanTape _ -> cleaning _ <
+  
+cleaning * -> cleaning _ <
+cleaning 0 -> cleaning 0 <
+cleaning 1 -> cleaning 1 <
+cleaning _ -> ac _ >
+  
+checkRight 0 -> checkRight 0 >
+checkRight 1 -> checkRight 1 >
+checkRight $ -> checkRight $ >
+checkRight _ -> checkRight _ >
+checkRight * -> checkRight * >
+checkRight # -> subOR # > 
+  
+subOR 1 -> subOR 1 >
+subOR 0 -> subOR 0 >
+subOR _ -> subOneRight _ <
+  
+subOneRight 0 -> subOneRight 1 <
+subOneRight 1 -> add 0 <
+subOneRight # -> copyNum # <  
+  
+add 1 -> add 1 <
+add 0 -> add 0 <
+add # -> add # <
+add $ -> add $ <
+add * -> addOne * <
+  
+addOne 1 -> added 0 <
+addOne 0 -> checkRight 1 >
+  
+added 0 -> checkRight 1 >
+added 1 -> added 0 <
+added _ -> checkRight 1 <
+  
+copyNum 0 -> copyNum 0 <
+copyNum 1 -> copyNum 1 <
+copyNum X -> copying X >
+copyNum Y -> copying Y >
+copyNum $ -> copying $ >
+copyNum # -> toRight # >
+  
+toRight 0 -> toRight 0 >
+toRight 1 -> toRight 1 >
+toRight # -> toRight # >
+toRight X -> toRight X >
+toRight Y -> toRight Y >
+toRight _ -> toNormal _ <
+  
+copying Y -> copying Y >
+copying X -> copying X >
+copying 1 -> moveY Y >
+copying 0 -> moveX X >
+copying # -> toRight # >
+  
+moveX # -> placeX # >
+moveX 0 -> moveX 0 >
+moveX 1 -> moveX 1 >
+  
+moveY # -> placeY # >
+moveY 0 -> moveY 0 >
+moveY 1 -> moveY 1 >
+  
+placeX 0 -> toLeft X <
+placeX 1 -> toLeft X <
+placeX _ -> toLeft X <
+placeX X -> placeX X > 
+placeX Y -> placeX Y >
+  
+placeY 0 -> toLeft Y <
+placeY 1 -> toLeft Y <
+placeY _ -> toLeft Y <
+placeY X -> placeY X >
+placeY Y -> placeY Y >
+placeY # -> placeY # >
+  
+toLeft 0 -> toLeft 0 <
+toLeft 1 -> toLeft 1 <
+toLeft X -> toLeft X <
+toLeft Y -> toLeft Y <
+toLeft # -> toLeft # <
+toLeft $ -> copyNum $ >

@@ -1,0 +1,29 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 0 -> s X >
+s 1 -> s Y >
+s _ -> getL _ <
+
+getL 0 -> getL 0 <
+getL 1 -> getL 1 <
+getL Z -> getL Z <
+getL X -> moveX Z >
+getL Y -> moveY Z >
+getL _ -> cleanZ _ >
+
+moveX 0 -> moveX 0 >
+moveX 1 -> moveX 1 >
+moveX Z -> moveX Z >
+moveX _ -> getL 0 <
+
+moveY 0 -> moveY 0 >
+moveY 1 -> moveY 1 >
+moveY Z -> moveY Z >
+moveY _ -> getL 1 <
+
+cleanZ Z -> cleanZ _ >
+cleanZ 0 -> ac 0 ^
+cleanZ 1 -> ac 1 ^

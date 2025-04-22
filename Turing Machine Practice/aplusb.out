@@ -1,0 +1,41 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 0 -> s 0 >
+s 1 -> s 1 >
+s + -> s + >
+s _ -> shiftRightToAdd _ <
+
+shiftRightToAdd 1 -> carryLeft 0 <
+shiftRightToAdd 0 -> addBit 1 <
+
+carryLeft 0 -> carryLeft 0 <
+carryLeft 1 -> carryLeft 1 <
+carryLeft + -> performAddition + <
+
+addBit 1 -> carryLeft 0 <
+addBit 0 -> addBit 1 <
+addBit + -> finalize + >
+
+performAddition 0 -> s 1 >
+performAddition 1 -> propagateCarry 0 <
+
+finalize _ -> cleanTape _ <
+finalize 1 -> finalize 1 >
+finalize 0 -> finalize 0 >
+finalize + -> moveToStart _ <
+
+propagateCarry 0 -> s 1 >
+propagateCarry 1 -> propagateCarry 0 <
+propagateCarry _ -> s 1 >
+
+cleanTape 0 -> cleanTape _ <
+cleanTape 1 -> cleanTape _ <
+cleanTape + -> moveToStart _ <
+
+moveToStart 1 -> moveToStart 1 <
+moveToStart 0 -> moveToStart 0 <
+moveToStart _ -> ac _ >
+
