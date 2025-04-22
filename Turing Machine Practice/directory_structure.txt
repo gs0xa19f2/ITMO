@@ -1,0 +1,2593 @@
+=== Структура каталога (ls -a) ===
+.
+..
+aplusb.out
+balanced.out
+convertto2.out
+directory_structure.txt
+factorialOld.out
+factorial.out
+infixlogic.out
+less.out
+mirror.out
+multiplication.out
+postfixlogic.out
+reverse.out
+scr.bash
+sorting.out
+tandem.out
+turing-machine-visualizer
+zero.out
+
+=== Структура каталога (tree -a) ===
+.
+├── aplusb.out
+├── balanced.out
+├── convertto2.out
+├── directory_structure.txt
+├── factorialOld.out
+├── factorial.out
+├── infixlogic.out
+├── less.out
+├── mirror.out
+├── multiplication.out
+├── postfixlogic.out
+├── reverse.out
+├── scr.bash
+├── sorting.out
+├── tandem.out
+├── turing-machine-visualizer
+│   ├── example
+│   ├── example_multi_rows
+│   ├── example_wide_symbols
+│   ├── factorialOld.py
+│   ├── factorial.py
+│   ├── gen.py
+│   ├── input.txt
+│   ├── README.md
+│   ├── rep.py
+│   ├── sym.py
+│   ├── temp.txt
+│   └── visualizer.py
+└── zero.out
+
+2 directories, 28 files
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/aplusb.out ===
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 0 -> s 0 >
+s 1 -> s 1 >
+s + -> s + >
+s _ -> shiftRightToAdd _ <
+
+shiftRightToAdd 1 -> carryLeft 0 <
+shiftRightToAdd 0 -> addBit 1 <
+
+carryLeft 0 -> carryLeft 0 <
+carryLeft 1 -> carryLeft 1 <
+carryLeft + -> performAddition + <
+
+addBit 1 -> carryLeft 0 <
+addBit 0 -> addBit 1 <
+addBit + -> finalize + >
+
+performAddition 0 -> s 1 >
+performAddition 1 -> propagateCarry 0 <
+
+finalize _ -> cleanTape _ <
+finalize 1 -> finalize 1 >
+finalize 0 -> finalize 0 >
+finalize + -> moveToStart _ <
+
+propagateCarry 0 -> s 1 >
+propagateCarry 1 -> propagateCarry 0 <
+propagateCarry _ -> s 1 >
+
+cleanTape 0 -> cleanTape _ <
+cleanTape 1 -> cleanTape _ <
+cleanTape + -> moveToStart _ <
+
+moveToStart 1 -> moveToStart 1 <
+moveToStart 0 -> moveToStart 0 <
+moveToStart _ -> ac _ >
+
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/balanced.out ===
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s ) -> rj ) ^
+s ( -> findClosing O >
+s C -> s _ >
+s _ -> ac _ ^
+
+findClosing ( -> findClosing ( >
+findClosing C -> findClosing C >
+findClosing ) -> moveBack C <
+findClosing _ -> rj _ ^
+
+moveBack ) -> moveBack ) <
+moveBack ( -> moveBack ( <
+moveBack C -> moveBack C < 
+moveBack O -> s _ >
+
+
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/mirror.out ===
+start: moveRight
+accept: ac
+reject: rj
+blank: _
+
+moveRight 0 -> moveRight 0 >
+moveRight 1 -> moveRight 1 >
+moveRight _ -> gotoStart _ <
+
+gotoStart 0 -> copy0 X >
+gotoStart 1 -> copy1 Y >
+gotoStart X -> gotoStart X <
+gotoStart Y -> gotoStart Y <
+gotoStart _ -> back _ >
+
+copy0 0 -> copy0 0 >
+copy0 1 -> copy0 1 >
+copy0 X -> copy0 X >
+copy0 Y -> copy0 Y >
+copy0 _ -> returnToCopy 0 <
+
+copy1 0 -> copy1 0 >
+copy1 1 -> copy1 1 >
+copy1 X -> copy1 X >
+copy1 Y -> copy1 Y >
+copy1 _ -> returnToCopy 1 <
+
+returnToCopy 0 -> returnToCopy 0 <
+returnToCopy 1 -> returnToCopy 1 <
+returnToCopy X -> gotoStart X <
+returnToCopy Y -> gotoStart Y <
+returnToCopy _ -> back _ >
+
+back 0 -> moveToLeftEnd 0 <
+back 1 -> moveToLeftEnd 1 <
+back X -> back 0 >
+back Y -> back 1 >
+back _ -> moveToLeftEnd _ <
+
+moveToLeftEnd 0 -> moveToLeftEnd 0 <
+moveToLeftEnd 1 -> moveToLeftEnd 1 <
+moveToLeftEnd _ -> ac _ >
+
+
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/tandem.out ===
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 0 -> Nev X >
+s 1 -> Nev Y >
+
+Ev 0 -> Nev 0 >
+Ev 1 -> Nev 1 >
+Ev _ -> Rr _ <
+
+Nev 0 -> Ev 0 >
+Nev 1 -> Ev 1 >
+Nev _ -> rj _ <
+
+Rr 0 -> ToL X <
+Rr 1 -> ToL Y <
+
+ToL 0 -> ToL 0 <
+ToL 1 -> ToL 1 <
+ToL X -> Lr X >
+ToL Y -> Lr Y >
+ToL _ -> Lr _ >
+
+Lr 0 -> ToR X >
+Lr 1 -> ToR Y >
+Lr X -> ToLX 0 <
+Lr Y -> ToLY 1 <
+
+ToR 0 -> ToR 0 >
+ToR 1 -> ToR 1 >
+ToR X -> Rr X <
+ToR Y -> Rr Y <
+ToR _ -> Rr _ <
+
+ToLY 0 -> ToLY 0 <
+ToLY 1 -> ToLY 1 <
+ToLY X -> ToLY X < 
+ToLY Y -> ToLY Y <
+ToLY _ -> CheckY _ >
+
+ToLX 0 -> ToLX 0 <
+ToLX 1 -> ToLX 1 <
+ToLX X -> ToLX X <
+ToLX Y -> ToLX Y <
+ToLX _ -> CheckX _ >
+
+CheckY X -> rj X >
+CheckY Y -> getNext _ >
+
+CheckX X -> getNext _ >
+CheckX Y -> rj X >
+
+getNext X -> getNext X >
+getNext Y -> getNext Y >
+getNext 1 -> prepare 1 >
+getNext 0 -> prepare 0 >
+
+prepare 0 -> prepare 0 >
+prepare 1 -> prepare 1 >
+prepare X -> ToLX 0 <
+prepare Y -> ToLY 1 <
+prepare _ -> ac _ >
+
+
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/turing-machine-visualizer/README.md ===
+# Консольный визуализатор машины Тьюринга
+
+Работает на *Python 3*.
+
+Для работы необходима библиотека *colorama*. Установить -- `pip3 install colorama`.
+А также, библиотека *curses*. В Unix системах должна быть установлена по-умолчанию. Чтобы установить в Windows -- `pip3 install windows-curses`.
+
+`visualizer.py machine input [delay] [-p]`
+* `machine` -- файл с описанием машины Тьюринга.
+* `input` -- файл с вводом.
+* `delay` -- опционально, задержка между тиками в секундах, по-умолчанию -- одна секунда.
+* `-p` -- опционально, если ключ указан, исполнение изначально будет поставлено на паузу.
+
+Пример запуска:
+* `python3 visualizer.py example /dev/null` (`/dev/null` может быть заменен на путь до любого пустого файла)
+* `python3 visualizer.py example_wide_symbols /dev/null`
+* `python3 visualizer.py example_multi_rows /dev/null`
+* `python3 visualizer.py zero.out 01 0.5`
+* `python3 visualizer.py sorting.out 01 -p`
+
+Во время работы, символами `^` показывает, где находятся головки на лентах, пишет позиции головок, и пишет текущую вершину в автомате.
+
+Для прерывания исполнения, нужно нажать q. Для паузы/продолжения, нужно нажать пробел. Поддерживает исполнение по шагам. Для этого, нужно поставить на паузу, а затем нажимать стрелку вправо для перехода к следующему шагу. Также, если исполнение не поставлено на паузу, и нажата стрелка вправо, между шагами не будет паузы.
+
+Поддерживает форматы машины Тьюринга из лабы.
+
+---
+
+`gen.py` -- вспомогательный скрипт, который по файлу с описанием машины Тьюринга генерирует код на *Python 3*, который ее выводит.
+`gen.py machine [name]`
+ 
+`machine` -- файл с описанием машины Тьюринга.
+`name` -- опционально, название задачи, если он не указан, за название задачи будет принято название файла с описанием.
+
+Генерирует в той же папке, где находится файл с описанием, программу на *Python 3*, которая назвается `$name.py`, которая при запуске выводит в файл `$name.out` то, что находилось в файле `$machine`.
+
+Пример запуска:
+`python3 gen.py example helloworld`
+`python3 gen.py zero/zero`
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/turing-machine-visualizer/example ===
+start: a
+accept: ac
+reject: rj
+blank: _
+a _ -> b H >
+b _ -> c e >
+c _ -> d l >
+d _ -> e l >
+e _ -> f o >
+f _ -> g , >
+g _ -> h _ >
+h _ -> i w >
+i _ -> j o >
+j _ -> k r >
+k _ -> l l >
+l _ -> m d >
+m _ -> ac ! >
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/turing-machine-visualizer/example_multi_rows ===
+3
+S _ _ _ -> b T > m > e >
+b _ _ _ -> c h > u > x >
+c _ _ _ -> d i > l > a >
+d _ _ _ -> e s > t > m >
+e _ _ _ -> f _ > i > p >
+f _ _ _ -> g i > _ > l >
+g _ _ _ -> h s > r > e >
+h _ _ _ -> i _ ^ o > _ ^
+i _ _ _ -> j _ ^ w > _ ^
+j _ _ _ -> AC _ ^ s > _ ^
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/turing-machine-visualizer/example_wide_symbols ===
+start: a
+accept: ac
+reject: rj
+blank: _
+a _ -> b This >
+b _ -> c is >
+c _ -> d example >
+d _ -> e with >
+e _ -> f long >
+f _ -> ac symbols >
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/turing-machine-visualizer/gen.py ===
+#!/usr/bin/python3
+# Written by Nikolay Budin, 2017
+
+import sys
+adr = sys.argv[1]
+
+name = ""
+if (len(sys.argv) > 2):
+    name = sys.argv[2]
+
+f = open(adr)
+
+res = ""
+for s in f:
+    s2 = s.strip()
+    if (s2 != ""):
+        res += s2 + "\\n"
+
+if ("/" in adr):
+    d = adr[: adr.rfind("/")]
+    if (name == ""):
+        name = adr[adr.rfind("/") + 1:]
+else:
+    d = "./"
+    if (name == ""):
+        name = adr
+
+
+print("print(\"" + res + "\", file=open(\"" + name + ".out\", \"w\"))", file=open(d + "/" + name + ".py", "w"))
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/turing-machine-visualizer/visualizer.py ===
+#!/usr/bin/python3
+# Written by Nikolay Budin, 2017
+# Rewritten by Nikolay Budin, 2019
+# Updated by Nikolay Budin, 2020
+
+import time
+import sys
+import colorama
+import curses
+
+colorama.init()
+
+"""
+start: s
+accept: ac
+reject: rj
+blank: _
+s _ -> ac _ ^
+s 0 -> a _ >
+a 0 -> b _ >
+b 0 -> a _ >
+a _ -> rj _ ^
+b _ -> ac _ ^
+"""
+
+machine_desc_path = sys.argv[1]
+input_path = sys.argv[2]
+delay = 1
+paused = False
+for i in range(3, len(sys.argv)):
+	if sys.argv[i] == '-p':
+		paused = True
+	try:
+		delay = float(sys.argv[i])
+	except:
+		pass
+
+def get_dir(act):
+	if act == "<":
+		return -1
+	if act == "^":
+		return 0
+	if act == ">":
+		return 1
+	raise Exception("'%s' is not a correct direction" % act)
+
+machine_desc = open(machine_desc_path, "r")
+
+accept = "AC"
+reject = "RJ"
+cur = "S"
+blank = "_"
+tapes_number = 1
+
+graph = dict()
+nodes = set()
+
+c = 0
+
+symb_len = 1
+
+for s in machine_desc:
+	if c == 0 and s.strip().isdecimal():
+		tapes_number = int(s.strip())
+	elif s.startswith("start:"):
+		cur = s[s.find(":") + 1:].strip()
+	elif s.startswith("accept:"):
+		accept = s[s.find(":") + 1:].strip()
+	elif s.startswith("reject:"):
+		reject = s[s.find(":") + 1:].strip()
+	elif s.startswith("blank:"):
+		blank = s[s.find(":") + 1:].strip()
+	elif s.strip() != "":
+		tmp = s.split()
+		if len(tmp) != 3 + tapes_number * 3:
+			raise Exception("Parse failed on line: \"%s\"" % s.strip())
+
+		fr = tmp[0]
+		ch = tuple(tmp[1:tapes_number + 1])
+		if tmp[tapes_number + 1] != "->":
+			raise Exception("Parse failed on line: \"%s\"" % s.strip())
+
+		to = tmp[tapes_number + 2]
+		new_ch = []
+		moves = []
+		for i in range(tapes_number):
+			new_ch.append(tmp[tapes_number + 3 + i * 2])
+			symb_len = max(symb_len, len(new_ch[-1]))
+			moves.append(get_dir(tmp[tapes_number + 3 + i * 2 + 1]))
+
+		graph[(fr, ch)] = [to, new_ch, moves]
+		nodes.add(fr)
+
+	c += 1
+
+for p in graph:
+	if graph[p][0] != reject and graph[p][0] != accept and not graph[p][0] in nodes:
+		print("Warning: There's an edge leading to node \"%s\", but there's no edge going from this node" % graph[p][0])
+
+inp = open(input_path, "r")
+
+carriages_position = [0] * tapes_number
+input_data = inp.readline().split()
+tapes = [dict() for _ in range(tapes_number)]
+
+for i in range(len(input_data)):
+	tapes[0][i] = input_data[i]
+
+prev_l = 0
+
+try:
+	stdscr = curses.initscr()
+	curses.noecho()
+	curses.cbreak()
+	curses.start_color()
+	curses.use_default_colors()
+	stdscr.nodelay(1)
+	stdscr.keypad(True)
+	height, width = stdscr.getmaxyx()
+
+	if height < tapes_number * 3 + 5:
+		raise Exception("Terminal window has to be at least %d characters height" % (tapes_number * 3 + 5))
+
+	curses.init_pair(1, curses.COLOR_BLUE, -1)
+
+	steps_cnt = 0
+	flag = True
+
+	gap = 5
+	cells_to_show = (width + 1) // (1 + symb_len)
+
+	if cells_to_show < gap * 2 + 1:
+		raise Exception("Terminal window has to be at least %d characters width" % ((gap * 2 + 1) * cells_to_show - 1))
+
+	lborder = [carriages_position[i] - gap for i in range(tapes_number)]
+
+	def get_carriage_shift(carriage_pos):
+		return carriage_pos * (symb_len + 1) + (symb_len - 1) // 2
+
+	def fix_symb_len(symb):
+		left_free = symb_len - len(symb)
+		return " " * (left_free // 2) + symb + " " * ((left_free + 1) // 2)
+
+	outcome = ""
+
+	pause_message = "Paused (press space to resume, press right-arrow to proceed to the next state)"
+	info_message = "Press 'q' to interrupt, Press space to pause/resume"
+
+	while (True):
+		stdscr.clear()
+		stdscr.addstr(tapes_number * 3 + 4, 0, info_message)
+		line_cnt = 0
+		cur_symbols = []
+		for i in range(tapes_number):
+			if carriages_position[i] - lborder[i] < gap:
+				lborder[i] = carriages_position[i] - gap
+			elif lborder[i] + cells_to_show - carriages_position[i] < gap:
+				lborder[i] = carriages_position[i] + gap - cells_to_show
+
+			to_show = []
+
+			for j in range(cells_to_show):
+				if not lborder[i] + j in tapes[i]:
+					tapes[i][lborder[i] + j] = blank
+				to_show.append(tapes[i][lborder[i] + j])
+
+			cur_symbols.append(tapes[i][carriages_position[i]])
+
+			stdscr.addstr(line_cnt, 0, " ".join(map(fix_symb_len, to_show)))
+			carriage_pos = carriages_position[i] - lborder[i]
+			carriage_shift = get_carriage_shift(carriage_pos)
+			stdscr.addstr(line_cnt + 1, carriage_shift, "^")
+			stdscr.addstr(line_cnt + 2, carriage_shift - (len(str(carriages_position[i])) - 1) // 2, str(carriages_position[i]))
+
+			line_cnt += 3
+		
+		line_cnt += 1
+		stdscr.addstr(line_cnt, 0, "Current node: %s" % cur)
+		stdscr.addstr(line_cnt + 1, 0, "Steps done: %d" % steps_cnt)
+		line_cnt += 3
+
+		stdscr.refresh()
+
+		cur_symbols = tuple(cur_symbols)
+
+		if cur == accept:
+			outcome = colorama.Fore.GREEN + "Accepted" + colorama.Style.RESET_ALL
+			break
+		if cur == reject:
+			outcome = colorama.Fore.RED + "Rejected" + colorama.Style.RESET_ALL
+			break
+
+		if not (cur, cur_symbols) in graph:
+			if tapes_number == 1:
+				outcome = colorama.Fore.RED + "Failed, No edge from %s by symbol %s, Rejected" % (cur, cur_symbols[0]) + colorama.Style.RESET_ALL
+			else:
+				outcome = colorama.Fore.RED + "Failed, No edge from %s by symbols (%s), Rejected" % (cur, ", ".join(cur_symbols)) + colorama.Style.RESET_ALL
+			cur = reject
+			break
+
+		if paused:
+			stdscr.addstr(tapes_number * 3 + 4, 0, pause_message, curses.color_pair(1))
+
+		time_was = float(time.time())
+		interupted = False
+		while time.time() - time_was < delay or paused:
+			key = stdscr.getch()
+			
+			if key == ord('q'):
+				outcome = colorama.Fore.YELLOW + "Interrupted by user" + colorama.Style.RESET_ALL
+				interupted = True
+				break
+
+			if key == ord(' '):
+				paused ^= 1
+				if paused:
+					stdscr.addstr(tapes_number * 3 + 4, 0, pause_message, curses.color_pair(1))
+				else:
+					stdscr.addstr(tapes_number * 3 + 4, 0, " " * len(pause_message))
+					stdscr.addstr(tapes_number * 3 + 4, 0, info_message)
+
+				stdscr.refresh()
+
+			if key == curses.KEY_RIGHT:
+				break
+
+			time.sleep(0.01)
+
+		if interupted:
+			break
+
+		steps_cnt += 1
+		tmp = graph[(cur, cur_symbols)]
+		cur = tmp[0]
+
+		for i in range(tapes_number):
+			tapes[i][carriages_position[i]] = tmp[1][i]
+			carriages_position[i] += tmp[2][i]
+
+	curses.endwin()
+
+	print("Final state of the tapes:")
+	for i in range(tapes_number):
+		tape_output = []
+		for pos in tapes[i]:
+			tape_output.append((pos, tapes[i][pos]))
+
+		tape_output.sort()
+		left_ind = tape_output[0][0]
+		tape_output = list(map(lambda x : x[1], tape_output))
+
+		while len(tape_output) and tape_output[0] == '_' and left_ind < carriages_position[i]:
+			tape_output = tape_output[1:]
+			left_ind += 1
+
+		while len(tape_output) and tape_output[-1] == '_' and carriages_position[i] + 1 < left_ind + len(tape_output):
+			tape_output = tape_output[:-1]
+
+		tape_output = ["_", "_"] + tape_output + ["_", "_"]
+		tape_output = list(map(fix_symb_len, tape_output))
+		left_ind -= 2
+
+		removed_from_left = False
+		removed_from_right = False
+
+		will_add_len = 0
+
+		while len(tape_output) * (symb_len + 1) - 1 + will_add_len > width:
+			if carriages_position[i] - left_ind > left_ind + len(tape_output) - 1 - carriages_position[i]:
+				if tape_output[0] != '_' and not removed_from_left:
+					removed_from_left = True
+					will_add_len += 4
+
+				tape_output = tape_output[1:]
+				left_ind += 1
+			else:
+				if tape_output[-1] != '_' and not removed_from_right:
+					removed_from_right = True
+					will_add_len += 4
+
+				tape_output = tape_output[:-1]
+
+		if removed_from_left:
+			tape_output = ["..."] + tape_output
+
+		if removed_from_right:
+			tape_output = tape_output + ["..."]
+
+		print(" ".join(tape_output))
+
+		carriage_pos = carriages_position[i] - left_ind
+		carriage_shift = get_carriage_shift(carriage_pos)
+		if removed_from_left:
+			carriage_shift += 4
+
+		print(" " * carriage_shift + "^")
+
+	print(outcome)
+	print("Total steps: %d" % steps_cnt)
+except KeyboardInterrupt as e:
+	pass
+except Exception as error:
+	curses.endwin()
+	raise error
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/turing-machine-visualizer/sym.py ===
+def read_turing_machine_rules(file_path):
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+    # Словарь для подсчета вхождений
+    transitions = {}
+
+    for line in lines:
+        # Разделение строки на части
+        parts = line.strip().split(' -> ')
+        if len(parts) == 2:
+            transition = parts[1]
+            if transition in transitions:
+                transitions[transition] += 1
+            else:
+                transitions[transition] = 1
+
+    # Вывод повторяющихся строк
+    repeated_transitions = {key: value for key, value in transitions.items() if value > 1}
+    return repeated_transitions
+
+# Путь к файлу с правилами машины Тьюринга
+file_path = '/home/greygosling/Документы/DM_LAB/turing-machine-visualizer/factorial.out'
+
+# Запуск функции и вывод результатов
+repeated_transitions = read_turing_machine_rules(file_path)
+for transition, count in repeated_transitions.items():
+    print(f'Transition: "{transition}" repeats {count} times')
+
+
+
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/turing-machine-visualizer/factorial.py ===
+print("start: s\naccept: ac\nreject: rj\nblank: _\ns 0 -> s X >\ns 1 -> s Y >\ns _ -> copy* * <\ncopy* Y -> copy* Y <\ncopy* X -> copy* X <\ncopy* 1 -> copy* 1 <\ncopy* 0 -> copy* 0 <\ncopy* * -> copy* * <\ncopy* _ -> copying* _ >\ncopying* X -> copyingX* 0 >\ncopying* Y -> copyingY* 1 >\ncopying* 0 -> copying* 0 >\ncopying* 1 -> copying* 1 >\ncopying* * -> sub* * >\ncopyingX* X -> copyingX* X >\ncopyingX* Y -> copyingX* Y >\ncopyingX* * -> copyingX* * >\ncopyingX* 1 -> copyingX* 1 >\ncopyingX* 0 -> copyingX* 0 >\ncopyingX* _ -> copy* 0 <\ncopyingY* X -> copyingY* X >\ncopyingY* Y -> copyingY* Y >\ncopyingY* * -> copyingY* * >\ncopyingY* 1 -> copyingY* 1 >\ncopyingY* 0 -> copyingY* 0 >\ncopyingY* _ -> copy* 1 <\nsub* 1 -> sub* 1 >\nsub* 0 -> sub* 0 >\nsub* _ -> subing* $ <\nsubing* 1 -> toLeft 0 <\nsubing* 0 -> subing* 1 <\nsubing* * -> zeroSpecial * >\nzeroSpecial 1 -> zeroSpecial * >\nzeroSpecial $ -> zeroSpecial * >\nzeroSpecial _ -> cleanZeroSpecial _ <\ncleanZeroSpecial * -> cleanZeroSpecial _ <\ncleanZeroSpecial 0 -> ac 1 ^\ntoLeft 0 -> toLeft 0 <\ntoLeft 1 -> toLeft 1 <\ntoLeft A -> toLeft 0 <\ntoLeft Z -> toLeft 1 <\ntoLeft * -> toLeft * <\ntoLeft $ -> toLeft $ <\ntoLeft X -> copy$ X >\ntoLeft Y -> copy$ Y >\ntoLeft _ -> copy$ _ >\ncopy$ 0 -> copyingX$ X >\ncopy$ 1 -> copyingY$ Y >\ncopy$ * -> clearLeft * <\ncopyingX$ 0 -> copyingX$ 0 >\ncopyingX$ 1 -> copyingX$ 1 >\ncopyingX$ * -> copyingX$ * >\ncopyingX$ $ -> copyingX$ $ >\ncopyingX$ _ -> toLeft 0 <\ncopyingY$ 0 -> copyingY$ 0 >\ncopyingY$ 1 -> copyingY$ 1 >\ncopyingY$ * -> copyingY$ * >\ncopyingY$ $ -> copyingY$ $ >\ncopyingY$ _ -> toLeft 1 <\nclearLeft X -> clearLeft Z <\nclearLeft Y -> clearLeft Z <\nclearLeft _ -> clearingLeft _ >\nclearingLeft Z -> clearingLeft _ >\nclearingLeft * -> placeZero * <\nplaceZero _ -> check$ 0 >\ncheck$ 0 -> check$ 0 >\ncheck$ 1 -> check$ 1 >\ncheck$ * -> check$ * >\ncheck$ # -> check$ # >\ncheck$ % -> check$ % >\ncheck$ A -> checkMultiplier A <\ncheck$ Z -> checkMultiplier Z <\ncheck$ $ -> checkMultiplier $ <\ncheckMultiplier A -> checkMultiplier A <\ncheckMultiplier Z -> checkMultiplier Z <\ncheckMultiplier * -> nextIt * <\ncheckMultiplier 0 -> addRank A <\ncheckMultiplier 1 -> sumRightLeft 1 >\nnextIt # -> nextIt 0 <\nnextIt % -> nextIt 1 <\nnextIt 1 -> prepareRight 1 >\nnextIt 0 -> prepareRight 0 >\nnextIt _ -> fin _ >\nfin 0 -> fin _ >\nfin 1 -> fin _ >\nfin * -> fin _ >\nfin A -> fin _ >\nfin Z -> fin _ >\nfin $ -> ac _ >\nprepareRight 0 -> prepareRight 0 >\nprepareRight 1 -> prepareRight 1 >\nprepareRight * -> prepareRight * >\nprepareRight Z -> prepareRight 1 >\nprepareRight A -> prepareRight 0 >\nprepareRight $ -> clearRight $ >\nclearRight 1 -> clearRight Z >\nclearRight 0 -> clearRight Z >\nclearRight _ -> clearingRight _ <\nclearingRight Z -> clearingRight _ <\nclearingRight $ -> subing* $ <\naddRank 0 -> addRank 0 <\naddRank 1 -> addRank 1 <\naddRank * -> addingRank * <\naddingRank # -> addingRank # <\naddingRank % -> addingRank % <\naddingRank X -> normalizeLeft # <\naddingRank Y -> normalizeLeft % <\naddingRank _ -> check$ # >\naddingRank 0 -> check$ # >\naddingRank 1 -> check$ % >\nnormalizeLeft X -> normalizeLeft 0 <\nnormalizeLeft Y -> normalizeLeft 1 <\nnormalizeLeft 0 -> normalizeRight 0 >\nnormalizeLeft 1 -> normalizeRight 1 >\nnormalizeLeft _ -> normalizeRight _ >\nnormalizeRight 1 -> normalizeRight 1 >\nnormalizeRight 0 -> normalizeRight 0 >\nnormalizeRight * -> normalizeRight * >\nnormalizeRight # -> normalizeRight # >\nnormalizeRight % -> normalizeRight % >\nnormalizeRight A -> normalizeRight A >\nnormalizeRight Z -> normalizeRight Z >\nnormalizeRight $ -> normalizeRight $ >\nnormalizeRight Q -> normalizeRight 0 >\nnormalizeRight W -> normalizeRight 1 >\nnormalizeRight _ -> to$ _ <\nto$ 0 -> to$ 0 <\nto$ 1 -> to$ 1 <\nto$ $ -> checkMultiplier $ <\nsumRightLeft A -> sumRightLeft A >\nsumRightLeft Z -> sumRightLeft Z >\nsumRightLeft $ -> sumRightLeft $ >\nsumRightLeft 0 -> sumRightLeft 0 >\nsumRightLeft 1 -> sumRightLeft 1 >\nsumRightLeft # -> sumRightLeft # >\nsumRightLeft % -> sumRightLeft % >\nsumRightLeft * -> sumRightLeft * >\nsumRightLeft X -> sumRightLeft X >\nsumRightLeft Y -> sumRightLeft Y >\nsumRightLeft W -> summingRightLeft W <\nsumRightLeft Q -> summingRightLeft Q <\nsumRightLeft _ -> summingRightLeft _ <\nsummingRightLeft 0 -> addZeroLeft Q <\nsummingRightLeft 1 -> addOneLeft W <\nsummingRightLeft $ -> nextRank $ <\nnextRank 1 -> addRankOne Z <\nnextRank Z -> nextRank Z <\nnextRank 0 -> addRankOne A <\nnextRank A -> nextRank A <\nnextRank * -> nextIt * >\naddRankOne 0 -> addRankOne 0 <\naddRankOne 1 -> addRankOne 1 <\naddRankOne * -> addingRankOne * <\naddingRankOne # -> addingRankOne # <\naddingRankOne % -> addingRankOne % <\naddingRankOne X -> normalizeLeft # <\naddingRankOne Y -> normalizeLeft % <\naddZeroLeft $ -> addZeroLeft $ <\naddZeroLeft * -> addZeroLeft * <\naddZeroLeft 0 -> addZeroLeft 0 <\naddZeroLeft 1 -> addZeroLeft 1 <\naddZeroLeft A -> addZeroLeft A <\naddZeroLeft Z -> addZeroLeft Z <\naddZeroLeft * -> addingZeroLeft * <\naddOneLeft $ -> addOneLeft $ <\naddOneLeft * -> addOneLeft * <\naddOneLeft 0 -> addOneLeft 0 <\naddOneLeft 1 -> addOneLeft 1 <\naddOneLeft A -> addOneLeft A <\naddOneLeft Z -> addOneLeft Z <\naddOneLeft * -> addingOneLeft * <\naddingZeroLeft # -> addingZeroLeft # <\naddingZeroLeft % -> addingZeroLeft % <\naddingZeroLeft Y -> addingZeroLeft Y <\naddingZeroLeft X -> addingZeroLeft X <\naddingZeroLeft 0 -> sumRightLeft X >\naddingZeroLeft 1 -> sumRightLeft Y >\naddingZeroLeft _ -> sumRightLeft X >\naddingOneLeft # -> addingOneLeft # <\naddingOneLeft % -> addingOneLeft % <\naddingOneLeft 1 -> addingOneLeft' X <\naddingOneLeft X -> addingOneLeft X <\naddingOneLeft Y -> addingOneLeft Y <\naddingOneLeft 0 -> sumRightLeft Y >\naddingOneLeft _ -> sumRightLeft Y >\naddingOneLeft' 0 -> sumRightLeft 1 >\naddingOneLeft' _ -> sumRightLeft 1 >\naddingOneLeft' 1 -> addingOneLeft' 0 <\n", file=open("factorial.py.out", "w"))
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/turing-machine-visualizer/factorialOld.py ===
+print("start: s\naccept: ac\nreject: rj\nblank: _\ns 0 -> s X >\ns 1 -> s Y >\ns _ -> copy* * <\ncopy* X -> copy* X <\ncopy* Y -> copy* Y <\ncopy* 1 -> move 1 >\ncopy* 0 -> move 0 >\ncopy* _ -> move _ >\ncopy* * -> place$ * >\nmove X -> moveXF 0 >\nmove Y -> moveYF 1 >\nmoveXF X -> moveXF X >\nmoveXF Y -> moveXF Y >\nmoveXF * -> placeXF * >\nmoveYF X -> moveYF X >\nmoveYF Y -> moveYF Y >\nmoveYF * -> placeYF * >\nplaceXF 1 -> placeXF 1 >\nplaceXF 0 -> placeXF 0 >\nplaceXF _ -> toLeft* 0 <\nplaceYF 1 -> placeYF 1 >\nplaceYF 0 -> placeYF 0 >\nplaceYF _ -> toLeft* 1 <\ntoLeft* 0 -> toLeft* 0 <\ntoLeft* 1 -> toLeft* 1 <\ntoLeft* * -> toLeft** * <\ntoLeft** 0 -> toLeft** 0 <\ntoLeft** 1 -> toLeft** 1 <\ntoLeft** X -> copy* X ^\ntoLeft** Y -> copy* Y ^\ntoLeft** _ -> to* _ >\nto* 0 -> to* 0 >\nto* 1 -> to* 1 >\nto* * -> firstSub * >\nfirstSub 1 -> firstSub 1 >\nfirstSub 0 -> firstSub 0 >\nfirstSub _ -> firstSR _ <\nsecondSub 1 -> secondSub 1 >\nsecondSub 0 -> secondSub 0 >\nsecondSub _ -> secondSR _ <\nsecondSR 0 -> secondSR 1 <\nsecondSR 1 -> place$ 0 >\nsecondSR * -> cleanTape * >\nfirstSR 0 -> firstSR 1 <\nfirstSR 1 -> secondSub 0 >\nfirstSR * -> cleanTapeZero * >\ncleanTapeZero 0 -> cleanTapeZero 0 >\ncleanTapeZero 1 -> cleanTapeZero 1 >\ncleanTapeZero _ -> cleaningZero _ <\ncleaningZero 0 -> cleaningZero _ <\ncleaningZero 1 -> cleaningZero _ <\ncleaningZero * -> cleaningZero _ <\ncleaningZero _ -> ac 1 ^\nplace$ 0 -> place$ 0 >\nplace$ 1 -> place$ 1 >\nplace$ * -> place$ * >\nplace$ _ -> goBack $ <\nplace# 0 -> place# 0 >\nplace# 1 -> place# 1 >\nplace# $ -> place# $ >\nplace# * -> place# * >\nplace# _ -> goBack # <\nplace# # -> place% # >\nplace% 0 -> place% 0 >\nplace% 1 -> place% 1 >\nplace% _ -> copyFact % <\ncopyFact 0 -> copyFact 0 <\ncopyFact 1 -> copyFact 1 <\ncopyFact # -> copyFact # <\ncopyFact $ -> copyFact' $ <\ncopyFact % -> copyFact'' % <\ncopyFact' 0 -> copyFact' X <\ncopyFact' 1 -> copyFact' Y <\ncopyFact' * -> copyFactXY * >\ncopyFact'' 0 -> copyFact'' 0 <\ncopyFact'' 1 -> copyFact'' 1 <\ncopyFact'' # -> copyFact'' # <\ncopyFact'' $ -> copyFact''' $ <\ncopyFact''' X -> copyFact''' X <\ncopyFact''' Y -> copyFact''' Y <\ncopyFact''' 0 -> copyFactXY 0 >\ncopyFact''' 1 -> copyFactXY 1 >\ncopyFact''' * -> copyFactXY * >\ncopyFactXY X -> copyFactX 0 >\ncopyFactXY Y -> copyFactY 1 >\ncopyFactXY $ -> checkMultiplier $ >\nnormalizeMult X -> normalizeMult 0 <\nnormalizeMult Y -> normalizeMult 1 <\nnormalizeMult * -> to$ * >\nto$ 0 -> to$ 0 >\nto$ 1 -> to$ 1 >\nto$ $ -> checkMultiplier $ >\ncopyFactX 0 -> copyFactX 0 >\ncopyFactX X -> copyFactX X >\ncopyFactX Y -> copyFactX Y >\ncopyFactX 1 -> copyFactX 1 >\ncopyFactX $ -> copyFactX $ >\ncopyFactX # -> copyFactX # >\ncopyFactX % -> CFRX % >\ncopyFactY 0 -> copyFactY 0 >\ncopyFactY 1 -> copyFactY 1 >\ncopyFactY X -> copyFactY X >\ncopyFactY Y -> copyFactY Y >\ncopyFactY $ -> copyFactY $ >\ncopyFactY # -> copyFactY # >\ncopyFactY % -> CFRY % >\nCFRX 0 -> CFRX 0 >\nCFRX 1 -> CFRX 1 >\nCFRX _ -> copyFact 0 <\nCFRY 0 -> CFRY 0 >\nCFRY 1 -> CFRY 1 >\nCFRY _ -> copyFact 1 <\nmoveNext 1 -> copyOne Y >\nmoveNext 0 -> copyZero X >\nmoveNext * -> toNormal * <\ntoNormal Y -> toNormal 1 <\ntoNormal X -> toNormal 0 <\ntoNormal # -> toNormal # <\ntoNormal _ -> place# _ >\ntoNormal $ -> subOne $ <\ncopyOne 0 -> copyOne 0 >\ncopyOne 1 -> copyOne 1 >\ncopyOne * -> placeOne * >\ncopyZero 0 -> copyZero 0 >\ncopyZero 1 -> copyZero 1 >\ncopyZero * -> placeZero * >\nplaceOne 1 -> placeOne 1 >\nplaceOne 0 -> placeOne 0 >\nplaceOne $ -> placeOne $ >\nplaceOne _ -> goBack 1 <\nplaceOne # -> placeOne # >\nplaceZero 1 -> placeZero 1 >\nplaceZero 0 -> placeZero 0 >\nplaceZero $ -> placeZero $ >\nplaceZero _ -> goBack 0 <\nplaceZero # -> placeZero # >\ngoBack _ -> moveNext _ >\ngoBack 1 -> goBack 1 <\ngoBack 0 -> goBack 0 <\ngoBack * -> goBack * <\ngoBack $ -> goBack $ <\ngoBack # -> goBack # <\ngoBack X -> moveNext X >\ngoBack Y -> moveNext Y >\ncheckMultiplier 1 -> checkMultiplier 1 <\ncheckMultiplier 0 -> checkMultiplier 0 <\ncheckMultiplier # -> checkMultiplier # <\ncheckMultiplier % -> checkMultiplier % <\ncheckMultiplier $ -> subOne $ <\nsubOne 0 -> subOne 1 <\nsubOne 1 -> checkRight 0 >\nsubOne * -> checkFactRight * >\ncheckFactRight 0 -> checkFactRight 0 >\ncheckFactRight 1 -> checkFactRight 1 >\ncheckFactRight # -> checkFactRight # >\ncheckFactRight $ -> checkFactRight $ >\ncheckFactRight % -> checkFactRight % >\ncheckFactRight _ -> subFactOne _ <\ncheckFactRight Z -> to*L Z <\nsubFactOne 0 -> subFactOne 1 <\nsubFactOne 1 -> prepare 0 >\nsubFactOne % -> finR Z >\nprepare 0 -> prepare 0 >\nprepare 1 -> prepare 1 >\nprepare _ -> factXY _ <\nfactXY 0 -> factXY X <\nfactXY 1 -> factXY Y <\nfactXY % -> getXY % >\ngetXY 0 -> getXY 0 >\ngetXY 1 -> getXY 1 >\ngetXY _ -> subFactOne _ <\ngetXY # -> getXY # >\ngetXY $ -> getXY $ >\ngetXY % -> getXY % >\ngetXY X -> copyFactRightX 0 <\ngetXY Y -> copyFactRightY 1 <\nfinR 1 -> finR Z >\nfinR _ -> finL _ <\nfinL Z -> finL _ <\nfinL 0 -> finL _ <\nfinL 1 -> finL _ <\nfinL # -> finL _ <\nfinL $ -> finL _ <\nfinL * -> completing _ <\ncompleting 0 -> completing 0 <\ncompleting 1 -> completing 1 <\ncompleting _ -> ac _ >\ncopyFactRightX 0 -> copyFactRightX 0 <\ncopyFactRightX 1 -> copyFactRightX 1 <\ncopyFactRightX % -> copyFactRightX % <\ncopyFactRightX $ -> copyFactRightX $ <\ncopyFactRightX # -> copyFactRightX # <\ncopyFactRightX * -> copyFactRightX' * >\ncopyFactRightX X -> copyFactRightX' X >\ncopyFactRightX Y -> copyFactRightX' Y >\ncopyFactRightY 0 -> copyFactRightY 0 <\ncopyFactRightY 1 -> copyFactRightY 1 <\ncopyFactRightY % -> copyFactRightY % <\ncopyFactRightY $ -> copyFactRightY $ <\ncopyFactRightY # -> copyFactRightY # <\ncopyFactRightY * -> copyFactRightY' * >\ncopyFactRightY X -> copyFactRightY' X >\ncopyFactRightY Y -> copyFactRightY' Y >\ncopyFactRightX' 0 -> getXY' X >\ncopyFactRightX' 1 -> getXY' X >\ncopyFactRightX' X -> copyFactRightX' X >\ncopyFactRightX' Y -> copyFactRightX' Y >\ncopyFactRightY' 0 -> getXY' Y >\ncopyFactRightY' 1 -> getXY' Y >\ncopyFactRightY' X -> copyFactRightY' X >\ncopyFactRightY' Y -> copyFactRightY' Y >\ngetXY' $ -> newCircle C >\ngetXY' 0 -> getXY 0 >\ngetXY' 1 -> getXY 1 >\nnewCircle 0 -> newCircle C >\nnewCircle 1 -> newCircle C >\nnewCircle # -> newCircle C >\nnewCircle % -> newCircle C >\nnewCircle X -> newCircle C >\nnewCircle Y -> newCircle C >\nnewCircle _ -> startNewCircle _ <\nstartNewCircle C -> startNewCircle _ <\nstartNewCircle X -> startNewCircle 0 <\nstartNewCircle Y -> startNewCircle 1 <\nstartNewCircle * -> place$ * >\nto*L 0 -> to*L 0 <\nto*L 1 -> to*L 1 <\nto*L # -> to*L # <\nto*L $ -> to*L $ <\nto*L Z -> to*L Z <\nto*L % -> to*L % <\nto*L * -> cleanTape * >\ncleanTape 1 -> cleanTape * >\ncleanTape 0 -> cleanTape * >\ncleanTape # -> cleanTape * >\ncleanTape $ -> cleanTape * >\ncleanTape % -> cleanTape * >\ncleanTape Z -> cleanTape * >\ncleanTape _ -> cleaning _ <\ncleaning * -> cleaning _ <\ncleaning 0 -> cleaning 0 <\ncleaning 1 -> cleaning 1 <\ncleaning _ -> ac _ >\ncheckRight 0 -> checkRight 0 >\ncheckRight 1 -> checkRight 1 >\ncheckRight $ -> checkRight $ >\ncheckRight _ -> checkRight _ >\ncheckRight * -> checkRight * >\ncheckRight # -> subOR # >\nsubOR 1 -> subOR 1 >\nsubOR 0 -> subOR 0 >\nsubOR % -> subOneRight % <\nsubOneRight 0 -> subOneRight 1 <\nsubOneRight 1 -> add 0 <\nsubOneRight # -> copyNum # <\nadd 1 -> add 1 <\nadd 0 -> add 0 <\nadd # -> add # <\nadd $ -> add $ <\nadd * -> addOne * <\naddOne 1 -> added 0 <\naddOne 0 -> checkRight 1 >\nadded 0 -> checkRight 1 >\nadded 1 -> added 0 <\nadded _ -> checkRight 1 <\ncopyNum 0 -> copyNum 0 <\ncopyNum 1 -> copyNum 1 <\ncopyNum X -> copying X >\ncopyNum Y -> copying Y >\ncopyNum $ -> copying $ >\ncopyNum # -> toRight # >\ntoRight 0 -> toRight 0 >\ntoRight 1 -> toRight 1 >\ntoRight # -> toRight # >\ntoRight X -> toRight X >\ntoRight Y -> toRight Y >\ntoRight % -> toNormal % <\ncopying Y -> copying Y >\ncopying X -> copying X >\ncopying 1 -> moveY Y >\ncopying 0 -> moveX X >\ncopying # -> toRight # >\nmoveX # -> placeX # >\nmoveX 0 -> moveX 0 >\nmoveX 1 -> moveX 1 >\nmoveY # -> placeY # >\nmoveY 0 -> moveY 0 >\nmoveY 1 -> moveY 1 >\nplaceX 0 -> toLeft X <\nplaceX 1 -> toLeft X <\nplaceX _ -> toLeft X <\nplaceX X -> placeX X >\nplaceX Y -> placeX Y >\nplaceY 0 -> toLeft Y <\nplaceY 1 -> toLeft Y <\nplaceY _ -> toLeft Y <\nplaceY X -> placeY X >\nplaceY Y -> placeY Y >\nplaceY # -> placeY # >\ntoLeft 0 -> toLeft 0 <\ntoLeft 1 -> toLeft 1 <\ntoLeft X -> toLeft X <\ntoLeft Y -> toLeft Y <\ntoLeft # -> toLeft # <\ntoLeft $ -> copyNum $ >\n", file=open("factorialOld.out", "w"))
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/turing-machine-visualizer/temp.txt ===
+placeRight L _ 1 -> placeRight L ^ _ > 1 <
+placeRight L _ 0 -> placeRight L ^ _ > 0 <
+placeRight L X 0 -> placeRight L ^ 0 > 0 <
+placeRight L X 1 -> placeRight L ^ 0 > 1 <
+placeRight L Y 0 -> placeRight L ^ 1 > 0 <
+placeRight L Y 1 -> placeRight L ^ 1 > 1 <
+placeRight L X _ -> placeRight L ^ 0 > _ ^
+placeRight L Y _ -> placeRight L ^ 1 > _ ^
+placeRight L X Y -> placeRight L ^ 0 > 1 >
+placeRight L X X -> placeRight L ^ 0 > 0 >
+placeRight L Y X -> placeRight L ^ 1 > 0 >
+placeRight L Y Y -> placeRight L ^ 1 > 1 >
+placeRight L | 0 -> placeRight L ^ | ^ 0 <
+placeRight L | 1 -> placeRight L ^ | ^ 1 <
+placeRight L | _ -> placingRight L ^ | > _ >
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/turing-machine-visualizer/rep.py ===
+def find_repeated_entries(program_text):
+    entries = {} 
+    repeated_entries = set()  
+
+    for line in program_text.strip().split('\n'):
+        if '->' in line:
+            left_part = line.split('->')[0].strip() 
+            if left_part in entries:
+                repeated_entries.add(left_part)  
+            entries[left_part] = entries.get(left_part, 0) + 1  
+
+    for entry in sorted(repeated_entries): 
+        print(f"{entry} -> {entries[entry]} раз")
+        
+program_text = """
+3
+
+S 1 _ _ -> S' _ > 1 > _ ^
+S 0 _ _ -> S' _ > 0 > _ ^
+S | _ _ -> S _ > _ ^ _ ^
+
+S' 1 _ _ -> S' _ > 1 > _ ^
+S' 0 _ _ -> S' _ > 0 > _ ^
+S' | _ _ -> checkDeli _ > | > _ ^
+S' _ _ _ -> toStart _ ^ _ < _ ^
+
+checkDeli 1 _ _ -> S' _ > 1 > _ ^
+checkDeli 0 _ _ -> S' _ > 0 > _ ^
+checkDeli | _ _ -> deliCopy' _ > _ ^ _ ^
+
+deliCopy 1 _ _ -> deliCopy _ > 1 > _ ^
+deliCopy 0 _ _ -> deliCopy _ > 0 > _ ^
+deliCopy | _ _ -> deliCopy' _ > | > _ ^
+deliCopy _ _ _ -> checkLastDeli _ ^ _ < _ ^
+
+checkLastDeli _ | _ -> checkLastDeli _ ^ _ < _ ^
+checkLastDeli _ 0 _ -> toStart _ ^ 0 ^ _ ^
+checkLastDeli _ 1 _ -> toStart _ ^ 1 ^ _ ^
+
+deliCopy' 1 _ _ -> deliCopy _ > 1 > _ ^
+deliCopy' 0 _ _ -> deliCopy _ > 0 > _ ^
+deliCopy' | _ _ -> deliCopy' _ > _ ^ _ ^
+deliCopy' _ _ _ -> checkLastDeli _ ^ _ < _ ^
+
+toStart _ 1 _ -> toStart 1 < _ < _ ^
+toStart _ 0 _ -> toStart 0 < _ < _ ^
+toStart _ | _ -> toStart | < _ < _ ^
+toStart _ _ _ -> start _ > _ ^ _ ^
+
+start 1 _ _ -> start 1 > 1 > _ ^
+start 0 _ _ -> start 0 > 0 > _ ^
+start | _ _ -> copyBelow | > | ^ _ ^
+start _ _ _ -> finalize _ < _ ^ _ ^
+
+copyBelow 1 | _ -> copyBelow 1 > | ^ 1 >
+copyBelow 0 | _ -> copyBelow 0 > | ^ 0 >
+copyBelow 1 _ _ -> copyBelow 1 ^ | ^ _ ^
+copyBelow 0 _ _ -> compare 0 > _ < 0 ^
+copyBelow | | _ -> compare | ^ | < _ <
+copyBelow _ | _ -> compare L ^ | < _ <
+copyBelow _ _ _ -> finalize _ < _ ^ _ ^
+
+compare _ 1 0 -> compare L ^ 1 ^ 0 ^
+compare | 0 0 -> compare | ^ X < X <
+compare | 0 1 -> compare | ^ X < Y <
+compare | 1 0 -> compare | ^ Y < X <
+compare | 1 1 -> compare | ^ Y < Y <
+compare | _ 1 -> placeRight | ^ _ > 1 <
+compare | | 1 -> placingRight | ^ | > 1 >
+compare | | 0 -> placingRight | ^ | > 0 >
+compare | _ 0 -> placeRight | ^ _ > 0 <
+compare | 1 _ -> compareNext | ^ 1 ^ _ >
+compare | 0 _ -> compareNext | ^ 0 ^ _ >
+compare | _ _ -> evenCompare | ^ _ > _ >
+compare | | _ -> evenCompare | ^ | > _ >
+compare L 0 0 -> compare L ^ X < X <
+compare L 0 1 -> compare L ^ X < Y <
+compare L 1 0 -> compare L ^ Y < X <
+compare L 1 1 -> compare L ^ Y < Y <
+compare L _ 1 -> placeRight L ^ _ > 1 <
+compare L | 1 -> placingRight L ^ | > 1 >
+compare L | 0 -> placingRight L ^ | > 0 >
+compare L _ 0 -> placeRight L ^ _ > 0 <
+compare L 1 _ -> compareNext L ^ 1 ^ _ >
+compare L 0 _ -> compareNext L ^ 0 ^ _ >
+compare L _ _ -> evenCompare L ^ _ > _ >
+compare L | _ -> evenCompare L ^ | > _ >
+
+evenCompare | Y Y -> evenCompare | ^ 1 > 1 >
+evenCompare | X X -> evenCompare | ^ 0 > 0 >
+evenCompare | Y X -> compareNext' | ^ 1 > 0 >
+evenCompare | X Y -> placeRight' | ^ 0 > 1 <
+evenCompare | | _ -> placeRight' | ^ | ^ _ <
+evenCompare L Y Y -> evenCompare L ^ 1 > 1 >
+evenCompare L X X -> evenCompare L ^ 0 > 0 >
+evenCompare L Y X -> compareNext' L ^ 1 > 0 >
+evenCompare L X Y -> placeRight' L ^ 0 > 1 <
+evenCompare L | _ -> placeRight' L ^ | ^ _ <
+
+placeRight' | 0 0 -> placeRight' | ^ 0 > 0 <
+placeRight' | 0 1 -> placeRight' | ^ 0 > 1 <
+placeRight' | 1 0 -> placeRight' | ^ 1 > 0 <
+placeRight' | 1 1 -> placeRight' | ^ 1 > 1 <
+placeRight' | | 0 -> placeRight' | ^ | ^ 0 <
+placeRight' | | 1 -> placeRight' | ^ | ^ 1 <
+placeRight' | Y 1 -> placeRight' | ^ 1 > 1 <
+placeRight' | Y 0 -> placeRight' | ^ 1 > 0 <
+placeRight' | X 0 -> placeRight' | ^ 0 > 0 <
+placeRight' | X 1 -> placeRight' | ^ 0 > 1 <
+placeRight' | | _ -> placingRight | ^ | > _ >
+placeRight' | X _ -> placingRight | ^ 0 > _ >
+placeRight' | Y _ -> placingRight | ^ 1 > _ >
+placeRight' L 0 0 -> placeRight' L ^ 0 > 0 <
+placeRight' L 0 1 -> placeRight' L ^ 0 > 1 <
+placeRight' L 1 0 -> placeRight' L ^ 1 > 0 <
+placeRight' L 1 1 -> placeRight' L ^ 1 > 1 <
+placeRight' L | 0 -> placeRight' L ^ | ^ 0 <
+placeRight' L | 1 -> placeRight' L ^ | ^ 1 <
+placeRight' L | _ -> placingRight L ^ | > _ >
+placeRight' L Y 1 -> placeRight' L ^ 1 > 1 <
+placeRight' L Y 0 -> placeRight' L ^ 1 > 0 <
+placeRight' L X 0 -> placeRight' L ^ 0 > 0 <
+placeRight' L X 1 -> placeRight' L ^ 0 > 1 <
+placeRight' L X _ -> placingRight L ^ 0 > _ >
+placeRight' L Y _ -> placingRight L ^ 1 > _ >
+
+compareNext' | X Y -> compareNext' | ^ 0 > 1 >
+compareNext' | Y X -> compareNext' | ^ 1 > 0 >
+compareNext' | X X -> compareNext' | ^ 0 > 0 >
+compareNext' | Y Y -> compareNext' | ^ 1 > 1 >
+compareNext' | | _ -> compareNext' | ^ | < _ <
+compareNext' | 0 0 -> compareNext' | ^ 0 < 0 ^
+compareNext' | 0 1 -> compareNext' | ^ 0 < 1 ^
+compareNext' | 1 0 -> compareNext' | ^ 1 < 0 ^
+compareNext' | 1 1 -> compareNext' | ^ 1 < 1 ^
+compareNext' | | 0 -> compareNext | ^ | < 0 ^ 
+compareNext' | | 1 -> compareNext | ^ | < 1 ^
+compareNext' | _ 0 -> placingLeft | ^ | < 0 ^
+compareNext' | _ 1 -> placingLeft | ^ | < 1 ^
+compareNext' L X Y -> compareNext' L ^ 0 > 1 >
+compareNext' L Y X -> compareNext' L ^ 1 > 0 >
+compareNext' L X X -> compareNext' L ^ 0 > 0 >
+compareNext' L Y Y -> compareNext' L ^ 1 > 1 >
+compareNext' L | _ -> compareNext' L ^ | < _ <
+compareNext' L 0 0 -> compareNext' L ^ 0 < 0 ^
+compareNext' L 0 1 -> compareNext' L ^ 0 < 1 ^
+compareNext' L 1 0 -> compareNext' L ^ 1 < 0 ^
+compareNext' L 1 1 -> compareNext' L ^ 1 < 1 ^
+compareNext' L | 0 -> compareNext L ^ | < 0 ^ 
+compareNext' L | 1 -> compareNext L ^ | < 1 ^
+compareNext' L _ 0 -> placingLeft L ^ | < 0 ^
+compareNext' L _ 1 -> placingLeft L ^ | < 1 ^
+
+placingLeft | _ 0 -> placingLeft | ^ 0 < _ < 
+placingLeft | _ 1 -> placingLeft | ^ 1 < _ <
+placingLeft | _ _ -> normalize | ^ _ > _ ^
+placingLeft L _ 0 -> placingLeft L ^ 0 < _ < 
+placingLeft L _ 1 -> placingLeft L ^ 1 < _ <
+placingLeft L _ _ -> normalize L ^ _ > _ ^
+
+placingLeft' L 0 0 -> placingLeft' L ^ 0 < 0 ^
+placingLeft' L 0 1 -> placingLeft' L ^ 0 < 1 ^
+placingLeft' L 1 0 -> placingLeft' L ^ 1 < 0 ^
+placingLeft' L 1 1 -> placingLeft' L ^ 1 < 1 ^
+placingLeft' L _ 0 -> placingLeft L ^ | < 0 ^
+placingLeft' L _ 1 -> placingLeft L ^ | < 1 ^
+
+normalize | 1 _ -> normalize | ^ 1 > _ ^
+normalize | 0 _ -> normalize | ^ 0 > _ ^
+normalize | | _ -> normalize | ^ | > _ ^
+normalize | X _ -> normalize | ^ 0 > _ ^
+normalize | Y _ -> normalize | ^ 1 > _ ^
+normalize | _ _ -> copyBelow' | ^ _ < _ ^
+normalize L 1 _ -> normalize L ^ 1 > _ ^
+normalize L 0 _ -> normalize L ^ 0 > _ ^
+normalize L | _ -> normalize L ^ | > _ ^
+normalize L X _ -> normalize L ^ 0 > _ ^
+normalize L Y _ -> normalize L ^ 1 > _ ^
+normalize L _ _ -> copyBelow' L ^ _ < _ ^
+
+copyBelow' | | _ -> copyBelow | > | ^ _ ^
+copyBelow' | 0 _ -> copyBelow | > 0 > _ ^
+copyBelow' | 1 _ -> copyBelow | > 1 > _ ^
+copyBelow' L | _ -> prepareFinalize L ^ _ < _ ^
+
+compareNext | 0 X -> compareNext | ^ 0 < 0 >
+compareNext | 0 Y -> compareNext | ^ 0 < 1 >
+compareNext | 1 X -> compareNext | ^ 1 < 0 >
+compareNext | 1 Y -> compareNext | ^ 1 < 1 >
+compareNext | | X -> compareNext | ^ | ^ 0 >
+compareNext | | Y -> compareNext | ^ | ^ 1 >
+compareNext | | 0 -> compareNext | ^ | ^ 0 >
+compareNext | | 1 -> compareNext | ^ | ^ 1 >
+compareNext | 0 _ -> compareNext | ^ 0 < _ ^
+compareNext | 1 _ -> compareNext | ^ 1 < _ ^
+compareNext | _ X -> compareNext | ^ _ ^ 0 >
+compareNext | _ Y -> compareNext | ^ _ ^ 1 >
+compareNext | _ _ -> compareNext' | ^ _ ^ _ <
+compareNext | | _ -> compare | ^ | < _ < 
+compareNext | 1 1 -> compare | ^ 1 ^ 1 ^
+compareNext | 0 0 -> compare | ^ 0 ^ 0 ^
+compareNext | 1 0 -> compare | ^ 1 ^ 0 ^ 
+compareNext | 0 1 -> compare | ^ 0 ^ 1 ^
+compareNext L 0 X -> compareNext L ^ 0 < 0 >
+compareNext L 0 Y -> compareNext L ^ 0 < 1 >
+compareNext L 1 X -> compareNext L ^ 1 < 0 >
+compareNext L 1 Y -> compareNext L ^ 1 < 1 >
+compareNext L | X -> compareNext L ^ | ^ 0 >
+compareNext L | Y -> compareNext L ^ | ^ 1 >
+compareNext L | 0 -> compareNext L ^ | ^ 0 >
+compareNext L | 1 -> compareNext L ^ | ^ 1 >
+compareNext L 0 _ -> compareNext L ^ 0 < _ ^
+compareNext L 1 _ -> compareNext L ^ 1 < _ ^
+compareNext L _ X -> compareNext L ^ _ ^ 0 >
+compareNext L _ Y -> compareNext L ^ _ ^ 1 >
+compareNext L | _ -> compare L ^ | < _ < 
+compareNext L 1 1 -> compare L ^ 1 ^ 1 ^
+compareNext L 0 0 -> compare L ^ 0 ^ 0 ^
+compareNext L 1 0 -> compare L ^ 1 ^ 0 ^ 
+compareNext L 0 1 -> compare L ^ 0 ^ 1 ^
+compareNext L _ _ -> prepareFinalize L > _ > _ ^
+
+prepareFinalize L 1 _ -> prepareFinalize L > 1 > _ ^
+prepareFinalize L 0 _ -> prepareFinalize L > 0 > _ ^
+prepareFinalize L | _ -> prepareFinalize L > _ ^ _ ^
+prepareFinalize L _ _ -> prepareFinalize L > _ ^ _ ^
+prepareFinalize _ 1 _ -> prepareFinalize _ ^ 1 > _ ^
+prepareFinalize _ 0 _ -> prepareFinalize _ ^ 0 > _ ^
+prepareFinalize _ | _ -> prepareFinalize _ ^ | > _ ^
+prepareFinalize _ _ _ -> finalize' _ < _ < _ ^
+prepareFinalize _ Y _ -> placingLeft' _ < 1 < _ <
+prepareFinalize _ X _ -> placingLeft' _ < 0 < _ <
+
+placeRight | _ 1 -> placeRight | ^ _ > 1 <
+placeRight | _ 0 -> placeRight | ^ _ > 0 <
+placeRight | X 0 -> placeRight | ^ 0 > 0 <
+placeRight | X 1 -> placeRight | ^ 0 > 1 <
+placeRight | Y 0 -> placeRight | ^ 1 > 0 <
+placeRight | Y 1 -> placeRight | ^ 1 > 1 <
+placeRight | X _ -> placeRight | ^ 0 > _ ^
+placeRight | Y _ -> placeRight | ^ 1 > _ ^
+placeRight | X Y -> placeRight | ^ 0 > 1 >
+placeRight | X X -> placeRight | ^ 0 > 0 >
+placeRight | Y X -> placeRight | ^ 1 > 0 >
+placeRight | Y Y -> placeRight | ^ 1 > 1 >
+placeRight | | 0 -> placeRight | ^ | ^ 0 <
+placeRight | | 1 -> placeRight | ^ | ^ 1 <
+placeRight | | _ -> placingRight | ^ | > _ >
+placeRight L _ 1 -> placeRight L ^ _ > 1 <
+placeRight L _ 0 -> placeRight L ^ _ > 0 <
+placeRight L X 0 -> placeRight L ^ 0 > 0 <
+placeRight L X 1 -> placeRight L ^ 0 > 1 <
+placeRight L Y 0 -> placeRight L ^ 1 > 0 <
+placeRight L Y 1 -> placeRight L ^ 1 > 1 <
+placeRight L X _ -> placeRight L ^ 0 > _ ^
+placeRight L Y _ -> placeRight L ^ 1 > _ ^
+placeRight L X Y -> placeRight L ^ 0 > 1 >
+placeRight L X X -> placeRight L ^ 0 > 0 >
+placeRight L Y X -> placeRight L ^ 1 > 0 >
+placeRight L Y Y -> placeRight L ^ 1 > 1 >
+placeRight L | 0 -> placeRight L ^ | ^ 0 <
+placeRight L | 1 -> placeRight L ^ | ^ 1 <
+placeRight L | _ -> placingRight L ^ | > _ >
+
+placingRight | _ 1 -> placingRight | ^ 1 > _ > 
+placingRight | _ Y -> placingRight | ^ 1 > _ >
+placingRight | _ 0 -> placingRight | ^ 0 > _ >
+placingRight | _ X -> placingRight | ^ 0 > _ >
+placingRight | 1 1 -> placingRight | ^ 1 ^ 1 >
+placingRight | 1 0 -> placingRight | ^ 1 ^ 0 >
+placingRight | 0 1 -> placingRight | ^ 0 ^ 1 >
+placingRight | 0 0 -> placingRight | ^ 0 ^ 0 >
+placingRight | 1 X -> placingRight | ^ 1 ^ 0 >
+placingRight | 1 Y -> placingRight | ^ 1 ^ 1 >
+placingRight | 0 X -> placingRight | ^ 0 ^ 0 >
+placingRight | 0 Y -> placingRight | ^ 0 ^ 1 >
+placingRight | Y Y -> placingRight | ^ 1 > 1 <
+placingRight | X X -> placingRight | ^ 0 > 0 <
+placingRight | X Y -> placingRight | ^ 0 > 1 <
+placingRight | Y X -> placingRight | ^ 1 > 0 <
+placingRight | Y 0 -> placingRight | ^ 1 > 0 <
+placingRight | Y 1 -> placingRight | ^ 1 > 1 <
+placingRight | X 0 -> placingRight | ^ 0 > 0 <
+placingRight | X 1 -> placingRight | ^ 0 > 1 <
+placingRight | | _ -> slidingRight | ^ | > _ >
+placingRight | | 0 -> placingRight | ^ | ^ 0 <
+placingRight | | 1 -> placingRight | ^ | ^ 1 <
+placingRight | 1 _ -> copyingRight | ^ 1 ^ _ <
+placingRight | _ _ -> copyBelow | > | ^ _ ^
+placingRight | X _ -> placingRight | ^ 0 > _ ^
+placingRight | Y _ -> placingRight | ^ 1 > _ ^
+placingRight L Y Y -> placingRight L ^ 1 > 1 <
+placingRight L X X -> placingRight L ^ 0 > 0 <
+placingRight L X Y -> placingRight L ^ 0 > 1 <
+placingRight L Y X -> placingRight L ^ 1 > 0 <
+placingRight L Y 0 -> placingRight L ^ 1 > 0 <
+placingRight L Y 1 -> placingRight L ^ 1 > 1 <
+placingRight L X 0 -> placingRight L ^ 0 > 0 <
+placingRight L X 1 -> placingRight L ^ 0 > 1 <
+placingRight L | _ -> slidingRight L ^ | > _ >
+placingRight L | 0 -> placingRight L ^ | ^ 0 <
+placingRight L | 1 -> placingRight L ^ | ^ 1 <
+placingRight L _ 1 -> placingRight L ^ 1 > _ > 
+placingRight L _ Y -> placingRight L ^ 1 > _ >
+placingRight L _ 0 -> placingRight L ^ 0 > _ >
+placingRight L _ X -> placingRight L ^ 0 > _ >
+placingRight L 1 1 -> placingRight L ^ 1 ^ 1 >
+placingRight L 1 0 -> placingRight L ^ 1 ^ 0 >
+placingRight L 0 1 -> placingRight L ^ 0 ^ 1 >
+placingRight L 0 0 -> placingRight L ^ 0 ^ 0 >
+placingRight L 1 X -> placingRight L ^ 1 ^ 0 >
+placingRight L 1 Y -> placingRight L ^ 1 ^ 1 >
+placingRight L 0 X -> placingRight L ^ 0 ^ 0 >
+placingRight L 0 Y -> placingRight L ^ 0 ^ 1 >
+placingRight L 1 _ -> copyingRight L ^ 1 ^ _ <
+placingRight L _ _ -> copyBelow L > | ^ _ ^
+placingRight L X _ -> placingRight L ^ 0 > _ ^
+placingRight L Y _ -> placingRight L ^ 1 > _ ^
+
+copyingRight | 1 1 -> copyingRight | ^ 1 ^ 1 >
+copyingRight | 1 0 -> copyingRight | ^ 1 ^ 0 >
+copyingRight | 0 1 -> copyingRight | ^ 0 ^ 1 >
+copyingRight | 0 0 -> copyingRight | ^ 0 ^ 0 >
+copyingRight | 0 X -> copyingRight | ^ 0 ^ 0 >
+copyingRight | 0 Y -> copyingRight | ^ 0 ^ 1 >
+copyingRight | 1 X -> copyingRight | ^ 1 ^ 0 >
+copyingRight | 1 Y -> copyingRight | ^ 1 ^ 1 >
+copyingRight | 1 _ -> copyingRight' | ^ 1 ^ | >
+copyingRight | 0 _ -> copyingRight' | ^ 0 ^ | >
+copyingRight L 1 1 -> copyingRight L ^ 1 ^ 1 >
+copyingRight L 1 0 -> copyingRight L ^ 1 ^ 0 >
+copyingRight L 0 1 -> copyingRight L ^ 0 ^ 1 >
+copyingRight L 0 0 -> copyingRight L ^ 0 ^ 0 >
+copyingRight L 1 _ -> copyingRight' L ^ 1 ^ | >
+copyingRight L 0 _ -> copyingRight' L ^ 0 ^ | >
+copyingRight L 0 X -> copyingRight L ^ 0 ^ 0 >
+copyingRight L 0 Y -> copyingRight L ^ 0 ^ 1 >
+copyingRight L 1 X -> copyingRight L ^ 1 ^ 0 >
+copyingRight L 1 Y -> copyingRight L ^ 1 ^ 1 >
+
+copyingRight' | 1 _ -> copyingRight' | ^ * > 1 >
+copyingRight' | 0 _ -> copyingRight' | ^ * > 0 >
+copyingRight' | X _ -> copyingRight' | ^ * > 0 >
+copyingRight' | Y _ -> copyingRight' | ^ * > 1 >
+copyingRight' | _ _ -> prepareCopR' | ^ _ < _ <
+copyingRight' | | _ -> copyingRight' | ^ * > | >
+copyingRight' L 1 _ -> copyingRight' L ^ * > 1 >
+copyingRight' L 0 _ -> copyingRight' L ^ * > 0 >
+copyingRight' L X _ -> copyingRight' L ^ * > 0 >
+copyingRight' L Y _ -> copyingRight' L ^ * > 1 >
+copyingRight' L | _ -> copyingRight' L ^ * > | >
+copyingRight' L _ _ -> prepareCopR' L ^ _ < _ <
+
+prepareCopR | * 0 -> prepareCopR | ^ _ < 0 <
+prepareCopR | * 1 -> prepareCopR | ^ _ < 1 <
+prepareCopR | * | -> prepareCopR | ^ _ < | <
+prepareCopR | | | -> prepareCopR | ^ | ^ | <
+prepareCopR | | 0 -> prepareCopR | ^ | ^ 0 <
+prepareCopR | | 1 -> prepareCopR | ^ | ^ 1 <
+prepareCopR | | _ -> slidingRight | ^ | > _ >
+prepareCopR L * 0 -> prepareCopR L ^ _ < 0 <
+prepareCopR L * 1 -> prepareCopR L ^ _ < 1 <
+prepareCopR L * | -> prepareCopR L ^ _ < | <
+prepareCopR L | | -> prepareCopR L ^ | ^ | <
+prepareCopR L | 0 -> prepareCopR L ^ | ^ 0 <
+prepareCopR L | 1 -> prepareCopR L ^ | ^ 1 <
+prepareCopR L | _ -> slidingRight L ^ | > _ >
+
+prepareCopR' | * | -> prepareCopR | ^ _ < _ <
+prepareCopR' | * 1 -> prepareCopR | ^ _ < 1 <
+prepareCopR' | * 0 -> prepareCopR | ^ _ < 0 <
+prepareCopR' L * | -> prepareCopR L ^ _ < _ <
+prepareCopR' L * 1 -> prepareCopR L ^ _ < 1 <
+prepareCopR' L * 0 -> prepareCopR L ^ _ < 0 <
+
+slidingRight | 1 1 -> copyingRight | ^ 1 ^ 1 >
+slidingRight | 1 0 -> copyingRight | ^ 1 ^ 0 >
+slidingRight | 0 1 -> copyingRight | ^ 0 ^ 1 >
+slidingRight | _ 1 -> slidingRight | ^ 1 > _ >
+slidingRight | _ 0 -> slidingRight | ^ 0 > _ >
+slidingRight | _ | -> slidingRight | ^ | > _ >
+slidingRight | _ _ -> copyBelow | > _ ^ _ ^
+slidingRight | _ Y -> slidingRight | ^ 1 > _ >
+slidingRight | _ X -> slidingRight | ^ 0 > _ >
+slidingRight L _ 1 -> slidingRight L ^ 1 > _ >
+slidingRight L _ 0 -> slidingRight L ^ 0 > _ >
+slidingRight L _ | -> slidingRight L ^ | > _ >
+slidingRight L _ _ -> copyBelow L > _ ^ _ ^
+slidingRight L _ Y -> slidingRight L ^ 1 > _ >
+slidingRight L _ X -> slidingRight L ^ 0 > _ >
+slidingRight L 1 0 -> copyingRight L ^ 1 ^ 0 >
+slidingRight L 0 1 -> copyingRight L ^ 0 ^ 1 >
+slidingRight L 1 1 -> copyingRight L ^ 1 ^ 1 >
+
+finalize 1 _ _ -> finalize _ < _ ^ _ ^
+finalize 0 _ _ -> finalize _ < _ ^ _ ^
+finalize | _ _ -> finalize _ < _ ^ _ ^
+finalize L _ _ -> finalize _ < _ ^ _ ^
+finalize _ _ _ -> fin _ ^ _ < _ ^
+
+finalize' L | _ -> finalize L ^ _ ^ _ ^
+finalize' L 1 _ -> finalize L ^ 1 > _ ^
+finalize' L 0 _ -> finalize L ^ 0 > _ ^
+
+fin _ 0 _ -> fin 0 < _ < _ ^
+fin _ 1 _ -> fin 1 < _ < _ ^
+fin _ | _ -> fin | < _ < _ ^
+fin _ _ _ -> AC _ > _ ^ _ ^
+"""
+
+find_repeated_entries(program_text)
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/turing-machine-visualizer/input.txt ===
+0 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 1 | 0
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/zero.out ===
+start: s
+accept: ac
+reject: rj
+blank: _
+s _ -> ac _ ^
+s 0 -> n _ >
+n 0 -> s _ >
+n _ -> rj _ >
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/convertto2.out ===
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 0 -> s 0 <
+s 1 -> s 1 <
+s 2 -> s 2 <
+s _ -> toRight Z >
+
+toRight 0 -> toRight 0 >
+toRight 1 -> toRight 1 >
+toRight 2 -> toRight 2 >
+toRight Z -> toRight Z >
+toRight _ -> getOne _ <
+
+getOne 2 -> toLeft 1 <
+getOne 1 -> toLeft 0 <
+getOne 0 -> findOne 2 <
+
+toLeft 0 -> toLeft 0 <
+toLeft 1 -> toLeft 1 <
+toLeft 2 -> toLeft 2 <
+toLeft Z -> addOne Z <
+
+addOne 0 -> toRight 1 > 
+addOne 1 -> addOne 0 <
+addOne _ -> toRight 1 > 
+
+findOne 1 -> toLeft 0 <
+findOne 2 -> toLeft 1 <
+findOne 0 -> findOne 2 <
+findOne Z -> cleanTape Z >
+
+cleanTape 0 -> cleanTape 0 >
+cleanTape 1 -> cleanTape 1 >
+cleanTape 2 -> cleanTape 2 >
+cleanTape _ -> cleaning _ <
+
+cleaning 2 -> cleaning _ <
+cleaning Z -> finCheck 0 <
+
+finCheck _ -> ac _ >
+finCheck 0 -> Costyl 0 >
+finCheck 1 -> Costyl 1 >
+
+Costyl 0 -> fin _ <
+
+fin 0 -> fin 0 <
+fin 1 -> fin 1 <
+fin _ -> ac _ >
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/factorial.out ===
+start: s
+accept: ac
+reject: rj
+blank: _
+   
+s 0 -> s X >
+s 1 -> s Y > 
+s _ -> copy* * <
+   
+copy* Y -> copy* Y <
+copy* X -> copy* X <
+copy* 1 -> copy* 1 <
+copy* 0 -> copy* 0 <
+copy* * -> copy* * <
+copy* _ -> copying* _ >
+   
+copying* X -> copyingX* 0 >
+copying* Y -> copyingY* 1 >
+copying* 0 -> copying* 0 >
+copying* 1 -> copying* 1 >
+copying* * -> sub* * >
+   
+copyingX* X -> copyingX* X >
+copyingX* Y -> copyingX* Y >
+copyingX* * -> copyingX* * >
+copyingX* 1 -> copyingX* 1 >
+copyingX* 0 -> copyingX* 0 >
+copyingX* _ -> copy* 0 < 
+   
+copyingY* X -> copyingY* X >
+copyingY* Y -> copyingY* Y >
+copyingY* * -> copyingY* * >
+copyingY* 1 -> copyingY* 1 >
+copyingY* 0 -> copyingY* 0 >
+copyingY* _ -> copy* 1 < 
+   
+sub* 1 -> sub* 1 >
+sub* 0 -> sub* 0 >
+sub* _ -> subing* $ <
+   
+subing* 1 -> toLeft 0 <
+subing* 0 -> subing* 1 <
+subing* * -> zeroSpecial * >
+   
+zeroSpecial 1 -> zeroSpecial * >
+zeroSpecial $ -> zeroSpecial * > 
+zeroSpecial _ -> cleanZeroSpecial _ <
+   
+cleanZeroSpecial * -> cleanZeroSpecial _ <
+cleanZeroSpecial 0 -> ac 1 ^
+   
+toLeft 0 -> toLeft 0 <
+toLeft 1 -> toLeft 1 < 
+toLeft A -> toLeft 0 <
+toLeft Z -> toLeft 1 <
+toLeft * -> toLeft * <
+toLeft $ -> toLeft $ <
+toLeft X -> copy$ X >
+toLeft Y -> copy$ Y >
+toLeft _ -> copy$ _ >
+   
+copy$ 0 -> copyingX$ X >
+copy$ 1 -> copyingY$ Y >
+copy$ * -> clearLeft * <
+   
+copyingX$ 0 -> copyingX$ 0 >
+copyingX$ 1 -> copyingX$ 1 >
+copyingX$ * -> copyingX$ * >
+copyingX$ $ -> copyingX$ $ >
+copyingX$ _ -> toLeft 0 <
+   
+copyingY$ 0 -> copyingY$ 0 >
+copyingY$ 1 -> copyingY$ 1 >
+copyingY$ * -> copyingY$ * >
+copyingY$ $ -> copyingY$ $ >
+copyingY$ _ -> toLeft 1 <
+   
+clearLeft X -> clearLeft Z <
+clearLeft Y -> clearLeft Z <
+clearLeft _ -> clearingLeft _ >
+   
+clearingLeft Z -> clearingLeft _ >
+clearingLeft * -> placeZero * <
+   
+placeZero _ -> check$ 0 >
+   
+check$ 0 -> check$ 0 >
+check$ 1 -> check$ 1 >
+check$ * -> check$ * >
+check$ # -> check$ # >
+check$ % -> check$ % >
+check$ A -> checkMultiplier A <
+check$ Z -> checkMultiplier Z <
+check$ $ -> checkMultiplier $ <
+   
+checkMultiplier A -> checkMultiplier A <
+checkMultiplier Z -> checkMultiplier Z <
+checkMultiplier * -> nextIt * <
+checkMultiplier 0 -> addRank A <
+checkMultiplier 1 -> sumRightLeft 1 >
+   
+nextIt # -> nextIt 0 <
+nextIt % -> nextIt 1 <
+nextIt 1 -> prepareRight 1 >
+nextIt 0 -> prepareRight 0 >
+nextIt _ -> fin _ >
+   
+fin 0 -> fin _ >
+fin 1 -> fin _ >
+fin * -> fin _ >
+fin A -> fin _ >
+fin Z -> fin _ >
+fin $ -> ac _ >
+   
+prepareRight 0 -> prepareRight 0 >
+prepareRight 1 -> prepareRight 1 >
+prepareRight * -> prepareRight * >
+prepareRight Z -> prepareRight 1 >
+prepareRight A -> prepareRight 0 > 
+prepareRight $ -> clearRight $ >
+   
+clearRight 1 -> clearRight Z >
+clearRight 0 -> clearRight Z >
+clearRight _ -> clearingRight _ <
+   
+clearingRight Z -> clearingRight _ <
+clearingRight $ -> subing* $ <
+   
+addRank 0 -> addRank 0 <
+addRank 1 -> addRank 1 <
+addRank * -> addingRank * <
+   
+addingRank # -> addingRank # <
+addingRank % -> addingRank % <
+addingRank X -> normalizeLeft # <
+addingRank Y -> normalizeLeft % <
+addingRank _ -> check$ # >
+addingRank 0 -> check$ # >
+addingRank 1 -> check$ % > 
+   
+normalizeLeft X -> normalizeLeft 0 <
+normalizeLeft Y -> normalizeLeft 1 <
+normalizeLeft 0 -> normalizeRight 0 >
+normalizeLeft 1 -> normalizeRight 1 >
+normalizeLeft _ -> normalizeRight _ >
+   
+normalizeRight 1 -> normalizeRight 1 >
+normalizeRight 0 -> normalizeRight 0 >
+normalizeRight * -> normalizeRight * >
+normalizeRight # -> normalizeRight # >
+normalizeRight % -> normalizeRight % >
+normalizeRight A -> normalizeRight A >
+normalizeRight Z -> normalizeRight Z >
+normalizeRight $ -> normalizeRight $ >
+normalizeRight Q -> normalizeRight 0 >
+normalizeRight W -> normalizeRight 1 > 
+normalizeRight _ -> to$ _ <
+   
+to$ 0 -> to$ 0 <
+to$ 1 -> to$ 1 <
+to$ $ -> checkMultiplier $ <
+   
+sumRightLeft A -> sumRightLeft A >
+sumRightLeft Z -> sumRightLeft Z >
+sumRightLeft $ -> sumRightLeft $ >
+sumRightLeft 0 -> sumRightLeft 0 >
+sumRightLeft 1 -> sumRightLeft 1 >
+sumRightLeft # -> sumRightLeft # >
+sumRightLeft % -> sumRightLeft % >
+sumRightLeft * -> sumRightLeft * >
+sumRightLeft X -> sumRightLeft X >
+sumRightLeft Y -> sumRightLeft Y >
+sumRightLeft W -> summingRightLeft W <
+sumRightLeft Q -> summingRightLeft Q <
+sumRightLeft _ -> summingRightLeft _ <
+   
+summingRightLeft 0 -> addZeroLeft Q <
+summingRightLeft 1 -> addOneLeft W <
+summingRightLeft $ -> nextRank $ <
+   
+nextRank 1 -> addRankOne Z <
+nextRank Z -> nextRank Z <
+nextRank 0 -> addRankOne A <
+nextRank A -> nextRank A <
+nextRank * -> nextIt * >
+   
+addRankOne 0 -> addRankOne 0 < 
+addRankOne 1 -> addRankOne 1 <
+addRankOne * -> addingRankOne * <
+   
+addingRankOne # -> addingRankOne # <
+addingRankOne % -> addingRankOne % <
+addingRankOne X -> normalizeLeft # <
+addingRankOne Y -> normalizeLeft % <
+   
+addZeroLeft $ -> addZeroLeft $ <
+addZeroLeft 0 -> addZeroLeft 0 <
+addZeroLeft 1 -> addZeroLeft 1 < 
+addZeroLeft A -> addZeroLeft A <
+addZeroLeft Z -> addZeroLeft Z <
+addZeroLeft * -> addingZeroLeft * <
+   
+addOneLeft $ -> addOneLeft $ <
+addOneLeft 0 -> addOneLeft 0 <
+addOneLeft 1 -> addOneLeft 1 < 
+addOneLeft A -> addOneLeft A <
+addOneLeft Z -> addOneLeft Z <
+addOneLeft * -> addingOneLeft * <
+   
+addingZeroLeft # -> addingZeroLeft # <
+addingZeroLeft % -> addingZeroLeft % <
+addingZeroLeft Y -> addingZeroLeft Y <
+addingZeroLeft X -> addingZeroLeft X <
+addingZeroLeft 0 -> sumRightLeft X >
+addingZeroLeft 1 -> sumRightLeft Y >
+addingZeroLeft _ -> sumRightLeft X >
+   
+addingOneLeft # -> addingOneLeft # <
+addingOneLeft % -> addingOneLeft % <
+addingOneLeft 1 -> addingOneLeft' X <
+addingOneLeft X -> addingOneLeft X <
+addingOneLeft Y -> addingOneLeft Y <
+addingOneLeft 0 -> sumRightLeft Y >
+addingOneLeft _ -> sumRightLeft Y >
+   
+addingOneLeft' 0 -> sumRightLeft 1 >
+addingOneLeft' _ -> sumRightLeft 1 >
+addingOneLeft' 1 -> addingOneLeft' 0 <
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/sorting.out ===
+3
+ 
+S 1 _ _ -> S' _ > 1 > _ ^
+S 0 _ _ -> S' _ > 0 > _ ^
+S | _ _ -> S _ > _ ^ _ ^
+ 
+S' 1 _ _ -> S' _ > 1 > _ ^
+S' 0 _ _ -> S' _ > 0 > _ ^
+S' | _ _ -> checkDeli _ > | > _ ^
+S' _ _ _ -> toStart _ ^ _ < _ ^
+ 
+checkDeli 1 _ _ -> S' _ > 1 > _ ^
+checkDeli 0 _ _ -> S' _ > 0 > _ ^
+checkDeli | _ _ -> deliCopy' _ > _ ^ _ ^
+ 
+deliCopy 1 _ _ -> deliCopy _ > 1 > _ ^
+deliCopy 0 _ _ -> deliCopy _ > 0 > _ ^
+deliCopy | _ _ -> deliCopy' _ > | > _ ^
+deliCopy _ _ _ -> checkLastDeli _ ^ _ < _ ^
+ 
+checkLastDeli _ | _ -> checkLastDeli _ ^ _ < _ ^
+checkLastDeli _ 0 _ -> toStart _ ^ 0 ^ _ ^
+checkLastDeli _ 1 _ -> toStart _ ^ 1 ^ _ ^
+ 
+deliCopy' 1 _ _ -> deliCopy _ > 1 > _ ^
+deliCopy' 0 _ _ -> deliCopy _ > 0 > _ ^
+deliCopy' | _ _ -> deliCopy' _ > _ ^ _ ^
+deliCopy' _ _ _ -> checkLastDeli _ ^ _ < _ ^
+ 
+toStart _ 1 _ -> toStart 1 < _ < _ ^
+toStart _ 0 _ -> toStart 0 < _ < _ ^
+toStart _ | _ -> toStart | < _ < _ ^
+toStart _ _ _ -> start _ > _ ^ _ ^
+ 
+start 1 _ _ -> start 1 > 1 > _ ^
+start 0 _ _ -> start 0 > 0 > _ ^
+start | _ _ -> copyBelow | > | ^ _ ^
+start _ _ _ -> finalize _ < _ ^ _ ^
+ 
+copyBelow 1 | _ -> copyBelow 1 > | ^ 1 >
+copyBelow 0 | _ -> copyBelow 0 > | ^ 0 >
+copyBelow 1 _ _ -> copyBelow 1 ^ | ^ _ ^
+copyBelow 0 _ _ -> compare 0 > _ < 0 ^
+copyBelow | | _ -> compare | ^ | < _ <
+copyBelow _ | _ -> compare L ^ | < _ <
+copyBelow _ _ _ -> finalize _ < _ ^ _ ^
+ 
+compare _ 1 0 -> compare L ^ 1 ^ 0 ^
+compare | 0 0 -> compare | ^ X < X <
+compare | 0 1 -> compare | ^ X < Y <
+compare | 1 0 -> compare | ^ Y < X <
+compare | 1 1 -> compare | ^ Y < Y <
+compare | _ 1 -> placeRight | ^ _ > 1 <
+compare | | 1 -> placingRight | ^ | > 1 >
+compare | | 0 -> placingRight | ^ | > 0 >
+compare | _ 0 -> placeRight | ^ _ > 0 <
+compare | 1 _ -> compareNext | ^ 1 ^ _ >
+compare | 0 _ -> compareNext | ^ 0 ^ _ >
+compare | _ _ -> evenCompare | ^ _ > _ >
+compare | | _ -> evenCompare | ^ | > _ >
+compare L 0 0 -> compare L ^ X < X <
+compare L 0 1 -> compare L ^ X < Y <
+compare L 1 0 -> compare L ^ Y < X <
+compare L 1 1 -> compare L ^ Y < Y <
+compare L _ 1 -> placeRight L ^ _ > 1 <
+compare L | 1 -> placingRight L ^ | > 1 >
+compare L | 0 -> placingRight L ^ | > 0 >
+compare L _ 0 -> placeRight L ^ _ > 0 <
+compare L 1 _ -> compareNext L ^ 1 ^ _ >
+compare L 0 _ -> compareNext L ^ 0 ^ _ >
+compare L _ _ -> evenCompare L ^ _ > _ >
+compare L | _ -> evenCompare L ^ | > _ >
+ 
+evenCompare | Y Y -> evenCompare | ^ 1 > 1 >
+evenCompare | X X -> evenCompare | ^ 0 > 0 >
+evenCompare | Y X -> compareNext' | ^ 1 > 0 >
+evenCompare | X Y -> placeRight' | ^ 0 > 1 <
+evenCompare | | _ -> placeRight' | ^ | ^ _ <
+evenCompare L Y Y -> evenCompare L ^ 1 > 1 >
+evenCompare L X X -> evenCompare L ^ 0 > 0 >
+evenCompare L Y X -> compareNext' L ^ 1 > 0 >
+evenCompare L X Y -> placeRight' L ^ 0 > 1 <
+evenCompare L | _ -> placeRight' L ^ | ^ _ <
+ 
+placeRight' | 0 0 -> placeRight' | ^ 0 > 0 <
+placeRight' | 0 1 -> placeRight' | ^ 0 > 1 <
+placeRight' | 1 0 -> placeRight' | ^ 1 > 0 <
+placeRight' | 1 1 -> placeRight' | ^ 1 > 1 <
+placeRight' | | 0 -> placeRight' | ^ | ^ 0 <
+placeRight' | | 1 -> placeRight' | ^ | ^ 1 <
+placeRight' | Y 1 -> placeRight' | ^ 1 > 1 <
+placeRight' | Y 0 -> placeRight' | ^ 1 > 0 <
+placeRight' | X 0 -> placeRight' | ^ 0 > 0 <
+placeRight' | X 1 -> placeRight' | ^ 0 > 1 <
+placeRight' | | _ -> placingRight | ^ | > _ >
+placeRight' | X _ -> placingRight | ^ 0 > _ >
+placeRight' | Y _ -> placingRight | ^ 1 > _ >
+placeRight' L 0 0 -> placeRight' L ^ 0 > 0 <
+placeRight' L 0 1 -> placeRight' L ^ 0 > 1 <
+placeRight' L 1 0 -> placeRight' L ^ 1 > 0 <
+placeRight' L 1 1 -> placeRight' L ^ 1 > 1 <
+placeRight' L | 0 -> placeRight' L ^ | ^ 0 <
+placeRight' L | 1 -> placeRight' L ^ | ^ 1 <
+placeRight' L | _ -> placingRight L ^ | > _ >
+placeRight' L Y 1 -> placeRight' L ^ 1 > 1 <
+placeRight' L Y 0 -> placeRight' L ^ 1 > 0 <
+placeRight' L X 0 -> placeRight' L ^ 0 > 0 <
+placeRight' L X 1 -> placeRight' L ^ 0 > 1 <
+placeRight' L X _ -> placingRight L ^ 0 > _ >
+placeRight' L Y _ -> placingRight L ^ 1 > _ >
+ 
+compareNext' | X Y -> compareNext' | ^ 0 > 1 >
+compareNext' | Y X -> compareNext' | ^ 1 > 0 >
+compareNext' | X X -> compareNext' | ^ 0 > 0 >
+compareNext' | Y Y -> compareNext' | ^ 1 > 1 >
+compareNext' | | _ -> compareNext' | ^ | < _ <
+compareNext' | 0 0 -> compareNext' | ^ 0 < 0 ^
+compareNext' | 0 1 -> compareNext' | ^ 0 < 1 ^
+compareNext' | 1 0 -> compareNext' | ^ 1 < 0 ^
+compareNext' | 1 1 -> compareNext' | ^ 1 < 1 ^
+compareNext' | | 0 -> compareNext | ^ | < 0 ^ 
+compareNext' | | 1 -> compareNext | ^ | < 1 ^
+compareNext' | _ 0 -> placingLeft | ^ | < 0 ^
+compareNext' | _ 1 -> placingLeft | ^ | < 1 ^
+compareNext' | _ _ -> compareNext' | ^ _ < _ <
+compareNext' L X Y -> compareNext' L ^ 0 > 1 >
+compareNext' L Y X -> compareNext' L ^ 1 > 0 >
+compareNext' L X X -> compareNext' L ^ 0 > 0 >
+compareNext' L Y Y -> compareNext' L ^ 1 > 1 >
+compareNext' L | _ -> compareNext' L ^ | < _ <
+compareNext' L 0 0 -> compareNext' L ^ 0 < 0 ^
+compareNext' L 0 1 -> compareNext' L ^ 0 < 1 ^
+compareNext' L 1 0 -> compareNext' L ^ 1 < 0 ^
+compareNext' L 1 1 -> compareNext' L ^ 1 < 1 ^
+compareNext' L | 0 -> compareNext L ^ | < 0 ^ 
+compareNext' L | 1 -> compareNext L ^ | < 1 ^
+compareNext' L _ 0 -> placingLeft L ^ | < 0 ^
+compareNext' L _ 1 -> placingLeft L ^ | < 1 ^
+compareNext' L _ _ -> compareNext' L ^ _ < _ <
+ 
+placingLeft | _ 0 -> placingLeft | ^ 0 < _ < 
+placingLeft | _ 1 -> placingLeft | ^ 1 < _ <
+placingLeft | _ _ -> normalize | ^ _ > _ ^
+placingLeft L _ 0 -> placingLeft L ^ 0 < _ < 
+placingLeft L _ 1 -> placingLeft L ^ 1 < _ <
+placingLeft L _ _ -> normalize L ^ _ > _ ^
+ 
+placingLeft' L 0 0 -> placingLeft' L ^ 0 < 0 ^
+placingLeft' L 0 1 -> placingLeft' L ^ 0 < 1 ^
+placingLeft' L 1 0 -> placingLeft' L ^ 1 < 0 ^
+placingLeft' L 1 1 -> placingLeft' L ^ 1 < 1 ^
+placingLeft' L _ 0 -> placingLeft L ^ | < 0 ^
+placingLeft' L _ 1 -> placingLeft L ^ | < 1 ^
+ 
+normalize | 1 _ -> normalize | ^ 1 > _ ^
+normalize | 0 _ -> normalize | ^ 0 > _ ^
+normalize | | _ -> normalize | ^ | > _ ^
+normalize | X _ -> normalize | ^ 0 > _ ^
+normalize | Y _ -> normalize | ^ 1 > _ ^
+normalize | _ _ -> copyBelow' | ^ _ < _ ^
+normalize L 1 _ -> normalize L ^ 1 > _ ^
+normalize L 0 _ -> normalize L ^ 0 > _ ^
+normalize L | _ -> normalize L ^ | > _ ^
+normalize L X _ -> normalize L ^ 0 > _ ^
+normalize L Y _ -> normalize L ^ 1 > _ ^
+normalize L _ _ -> copyBelow' L ^ _ < _ ^
+ 
+copyBelow' | | _ -> copyBelow | > | ^ _ ^
+copyBelow' | 0 _ -> copyBelow | > 0 > _ ^
+copyBelow' | 1 _ -> copyBelow | > 1 > _ ^
+copyBelow' L | _ -> prepareFinalize L ^ _ < _ ^
+ 
+compareNext | 0 X -> compareNext | ^ 0 < 0 >
+compareNext | 0 Y -> compareNext | ^ 0 < 1 >
+compareNext | 1 X -> compareNext | ^ 1 < 0 >
+compareNext | 1 Y -> compareNext | ^ 1 < 1 >
+compareNext | | X -> compareNext | ^ | ^ 0 >
+compareNext | | Y -> compareNext | ^ | ^ 1 >
+compareNext | | 0 -> compareNext | ^ | ^ 0 >
+compareNext | | 1 -> compareNext | ^ | ^ 1 >
+compareNext | 0 _ -> compareNext | ^ 0 < _ ^
+compareNext | 1 _ -> compareNext | ^ 1 < _ ^
+compareNext | _ X -> compareNext | ^ _ ^ 0 >
+compareNext | _ Y -> compareNext | ^ _ ^ 1 >
+compareNext | _ _ -> compareNext' | ^ _ ^ _ <
+compareNext | | _ -> compare | ^ | < _ < 
+compareNext | 1 1 -> compare | ^ 1 ^ 1 ^
+compareNext | 0 0 -> compare | ^ 0 ^ 0 ^
+compareNext | 1 0 -> compare | ^ 1 ^ 0 ^ 
+compareNext | 0 1 -> compare | ^ 0 ^ 1 ^
+compareNext L 0 X -> compareNext L ^ 0 < 0 >
+compareNext L 0 Y -> compareNext L ^ 0 < 1 >
+compareNext L 1 X -> compareNext L ^ 1 < 0 >
+compareNext L 1 Y -> compareNext L ^ 1 < 1 >
+compareNext L | X -> compareNext L ^ | ^ 0 >
+compareNext L | Y -> compareNext L ^ | ^ 1 >
+compareNext L | 0 -> compareNext L ^ | ^ 0 >
+compareNext L | 1 -> compareNext L ^ | ^ 1 >
+compareNext L 0 _ -> compareNext L ^ 0 < _ ^
+compareNext L 1 _ -> compareNext L ^ 1 < _ ^
+compareNext L _ X -> compareNext L ^ _ ^ 0 >
+compareNext L _ Y -> compareNext L ^ _ ^ 1 >
+compareNext L | _ -> compare L ^ | < _ < 
+compareNext L 1 1 -> compare L ^ 1 ^ 1 ^
+compareNext L 0 0 -> compare L ^ 0 ^ 0 ^
+compareNext L 1 0 -> compare L ^ 1 ^ 0 ^ 
+compareNext L 0 1 -> compare L ^ 0 ^ 1 ^
+compareNext L _ _ -> prepareFinalize L > _ > _ ^
+ 
+prepareFinalize L 1 _ -> prepareFinalize L > 1 > _ ^
+prepareFinalize L 0 _ -> prepareFinalize L > 0 > _ ^
+prepareFinalize L | _ -> prepareFinalize L > _ ^ _ ^
+prepareFinalize L _ _ -> prepareFinalize L > _ ^ _ ^
+prepareFinalize _ 1 _ -> prepareFinalize _ ^ 1 > _ ^
+prepareFinalize _ 0 _ -> prepareFinalize _ ^ 0 > _ ^
+prepareFinalize _ | _ -> prepareFinalize _ ^ | > _ ^
+prepareFinalize _ _ _ -> finalize' _ < _ < _ ^
+prepareFinalize _ Y _ -> placingLeft' _ < 1 < _ <
+prepareFinalize _ X _ -> placingLeft' _ < 0 < _ <
+ 
+placeRight | _ 1 -> placeRight | ^ _ > 1 <
+placeRight | _ 0 -> placeRight | ^ _ > 0 <
+placeRight | X 0 -> placeRight | ^ 0 > 0 <
+placeRight | X 1 -> placeRight | ^ 0 > 1 <
+placeRight | Y 0 -> placeRight | ^ 1 > 0 <
+placeRight | Y 1 -> placeRight | ^ 1 > 1 <
+placeRight | X _ -> placeRight | ^ 0 > _ ^
+placeRight | Y _ -> placeRight | ^ 1 > _ ^
+placeRight | X Y -> placeRight | ^ 0 > 1 >
+placeRight | X X -> placeRight | ^ 0 > 0 >
+placeRight | Y X -> placeRight | ^ 1 > 0 >
+placeRight | Y Y -> placeRight | ^ 1 > 1 >
+placeRight | | 0 -> placeRight | ^ | ^ 0 <
+placeRight | | 1 -> placeRight | ^ | ^ 1 <
+placeRight | | _ -> placingRight | ^ | > _ >
+placeRight L _ 1 -> placeRight L ^ _ > 1 <
+placeRight L _ 0 -> placeRight L ^ _ > 0 <
+placeRight L X 0 -> placeRight L ^ 0 > 0 <
+placeRight L X 1 -> placeRight L ^ 0 > 1 <
+placeRight L Y 0 -> placeRight L ^ 1 > 0 <
+placeRight L Y 1 -> placeRight L ^ 1 > 1 <
+placeRight L X _ -> placeRight L ^ 0 > _ ^
+placeRight L Y _ -> placeRight L ^ 1 > _ ^
+placeRight L X Y -> placeRight L ^ 0 > 1 >
+placeRight L X X -> placeRight L ^ 0 > 0 >
+placeRight L Y X -> placeRight L ^ 1 > 0 >
+placeRight L Y Y -> placeRight L ^ 1 > 1 >
+placeRight L | 0 -> placeRight L ^ | ^ 0 <
+placeRight L | 1 -> placeRight L ^ | ^ 1 <
+placeRight L | _ -> placingRight L ^ | > _ >
+ 
+placingRight | _ 1 -> placingRight | ^ 1 > _ > 
+placingRight | _ Y -> placingRight | ^ 1 > _ >
+placingRight | _ 0 -> placingRight | ^ 0 > _ >
+placingRight | _ X -> placingRight | ^ 0 > _ >
+placingRight | 1 1 -> placingRight | ^ 1 ^ 1 >
+placingRight | 1 0 -> placingRight | ^ 1 ^ 0 >
+placingRight | 0 1 -> placingRight | ^ 0 ^ 1 >
+placingRight | 0 0 -> placingRight | ^ 0 ^ 0 >
+placingRight | 1 X -> placingRight | ^ 1 ^ 0 >
+placingRight | 1 Y -> placingRight | ^ 1 ^ 1 >
+placingRight | 0 X -> placingRight | ^ 0 ^ 0 >
+placingRight | 0 Y -> placingRight | ^ 0 ^ 1 >
+placingRight | Y Y -> placingRight | ^ 1 > 1 <
+placingRight | X X -> placingRight | ^ 0 > 0 <
+placingRight | X Y -> placingRight | ^ 0 > 1 <
+placingRight | Y X -> placingRight | ^ 1 > 0 <
+placingRight | Y 0 -> placingRight | ^ 1 > 0 <
+placingRight | Y 1 -> placingRight | ^ 1 > 1 <
+placingRight | X 0 -> placingRight | ^ 0 > 0 <
+placingRight | X 1 -> placingRight | ^ 0 > 1 <
+placingRight | | _ -> slidingRight | ^ | > _ >
+placingRight | | 0 -> placingRight | ^ | ^ 0 <
+placingRight | | 1 -> placingRight | ^ | ^ 1 <
+placingRight | 1 _ -> copyingRight | ^ 1 ^ _ <
+placingRight | _ _ -> copyBelow | > | ^ _ ^
+placingRight | X _ -> placingRight | ^ 0 > _ ^
+placingRight | Y _ -> placingRight | ^ 1 > _ ^
+placingRight L Y Y -> placingRight L ^ 1 > 1 <
+placingRight L X X -> placingRight L ^ 0 > 0 <
+placingRight L X Y -> placingRight L ^ 0 > 1 <
+placingRight L Y X -> placingRight L ^ 1 > 0 <
+placingRight L Y 0 -> placingRight L ^ 1 > 0 <
+placingRight L Y 1 -> placingRight L ^ 1 > 1 <
+placingRight L X 0 -> placingRight L ^ 0 > 0 <
+placingRight L X 1 -> placingRight L ^ 0 > 1 <
+placingRight L | _ -> slidingRight L ^ | > _ >
+placingRight L | 0 -> placingRight L ^ | ^ 0 <
+placingRight L | 1 -> placingRight L ^ | ^ 1 <
+placingRight L _ 1 -> placingRight L ^ 1 > _ > 
+placingRight L _ Y -> placingRight L ^ 1 > _ >
+placingRight L _ 0 -> placingRight L ^ 0 > _ >
+placingRight L _ X -> placingRight L ^ 0 > _ >
+placingRight L 1 1 -> placingRight L ^ 1 ^ 1 >
+placingRight L 1 0 -> placingRight L ^ 1 ^ 0 >
+placingRight L 0 1 -> placingRight L ^ 0 ^ 1 >
+placingRight L 0 0 -> placingRight L ^ 0 ^ 0 >
+placingRight L 1 X -> placingRight L ^ 1 ^ 0 >
+placingRight L 1 Y -> placingRight L ^ 1 ^ 1 >
+placingRight L 0 X -> placingRight L ^ 0 ^ 0 >
+placingRight L 0 Y -> placingRight L ^ 0 ^ 1 >
+placingRight L 1 _ -> copyingRight L ^ 1 ^ _ <
+placingRight L _ _ -> copyBelow L > | ^ _ ^
+placingRight L X _ -> placingRight L ^ 0 > _ ^
+placingRight L Y _ -> placingRight L ^ 1 > _ ^
+ 
+copyingRight | 1 1 -> copyingRight | ^ 1 ^ 1 >
+copyingRight | 1 0 -> copyingRight | ^ 1 ^ 0 >
+copyingRight | 0 1 -> copyingRight | ^ 0 ^ 1 >
+copyingRight | 0 0 -> copyingRight | ^ 0 ^ 0 >
+copyingRight | 0 X -> copyingRight | ^ 0 ^ 0 >
+copyingRight | 0 Y -> copyingRight | ^ 0 ^ 1 >
+copyingRight | 1 X -> copyingRight | ^ 1 ^ 0 >
+copyingRight | 1 Y -> copyingRight | ^ 1 ^ 1 >
+copyingRight | 1 _ -> copyingRight' | ^ 1 ^ | >
+copyingRight | 0 _ -> copyingRight' | ^ 0 ^ | >
+copyingRight L 1 1 -> copyingRight L ^ 1 ^ 1 >
+copyingRight L 1 0 -> copyingRight L ^ 1 ^ 0 >
+copyingRight L 0 1 -> copyingRight L ^ 0 ^ 1 >
+copyingRight L 0 0 -> copyingRight L ^ 0 ^ 0 >
+copyingRight L 1 _ -> copyingRight' L ^ 1 ^ | >
+copyingRight L 0 _ -> copyingRight' L ^ 0 ^ | >
+copyingRight L 0 X -> copyingRight L ^ 0 ^ 0 >
+copyingRight L 0 Y -> copyingRight L ^ 0 ^ 1 >
+copyingRight L 1 X -> copyingRight L ^ 1 ^ 0 >
+copyingRight L 1 Y -> copyingRight L ^ 1 ^ 1 >
+ 
+copyingRight' | 1 _ -> copyingRight' | ^ * > 1 >
+copyingRight' | 0 _ -> copyingRight' | ^ * > 0 >
+copyingRight' | X _ -> copyingRight' | ^ * > 0 >
+copyingRight' | Y _ -> copyingRight' | ^ * > 1 >
+copyingRight' | _ _ -> prepareCopR' | ^ _ < _ <
+copyingRight' | | _ -> copyingRight' | ^ * > | >
+copyingRight' L 1 _ -> copyingRight' L ^ * > 1 >
+copyingRight' L 0 _ -> copyingRight' L ^ * > 0 >
+copyingRight' L X _ -> copyingRight' L ^ * > 0 >
+copyingRight' L Y _ -> copyingRight' L ^ * > 1 >
+copyingRight' L | _ -> copyingRight' L ^ * > | >
+copyingRight' L _ _ -> prepareCopR' L ^ _ < _ <
+ 
+prepareCopR | * 0 -> prepareCopR | ^ _ < 0 <
+prepareCopR | * 1 -> prepareCopR | ^ _ < 1 <
+prepareCopR | * | -> prepareCopR | ^ _ < | <
+prepareCopR | | | -> prepareCopR | ^ | ^ | <
+prepareCopR | | 0 -> prepareCopR | ^ | ^ 0 <
+prepareCopR | | 1 -> prepareCopR | ^ | ^ 1 <
+prepareCopR | | _ -> slidingRight | ^ | > _ >
+prepareCopR L * 0 -> prepareCopR L ^ _ < 0 <
+prepareCopR L * 1 -> prepareCopR L ^ _ < 1 <
+prepareCopR L * | -> prepareCopR L ^ _ < | <
+prepareCopR L | | -> prepareCopR L ^ | ^ | <
+prepareCopR L | 0 -> prepareCopR L ^ | ^ 0 <
+prepareCopR L | 1 -> prepareCopR L ^ | ^ 1 <
+prepareCopR L | _ -> slidingRight L ^ | > _ >
+ 
+prepareCopR' | * | -> prepareCopR | ^ _ < _ <
+prepareCopR' | * 1 -> prepareCopR | ^ _ < 1 <
+prepareCopR' | * 0 -> prepareCopR | ^ _ < 0 <
+prepareCopR' L * | -> prepareCopR L ^ _ < _ <
+prepareCopR' L * 1 -> prepareCopR L ^ _ < 1 <
+prepareCopR' L * 0 -> prepareCopR L ^ _ < 0 <
+ 
+slidingRight | 1 1 -> copyingRight | ^ 1 ^ 1 >
+slidingRight | 1 0 -> copyingRight | ^ 1 ^ 0 >
+slidingRight | 0 1 -> copyingRight | ^ 0 ^ 1 >
+slidingRight | _ 1 -> slidingRight | ^ 1 > _ >
+slidingRight | _ 0 -> slidingRight | ^ 0 > _ >
+slidingRight | _ | -> slidingRight | ^ | > _ >
+slidingRight | _ _ -> copyBelow | > _ ^ _ ^
+slidingRight | _ Y -> slidingRight | ^ 1 > _ >
+slidingRight | _ X -> slidingRight | ^ 0 > _ >
+slidingRight L _ 1 -> slidingRight L ^ 1 > _ >
+slidingRight L _ 0 -> slidingRight L ^ 0 > _ >
+slidingRight L _ | -> slidingRight L ^ | > _ >
+slidingRight L _ _ -> copyBelow L > _ ^ _ ^
+slidingRight L _ Y -> slidingRight L ^ 1 > _ >
+slidingRight L _ X -> slidingRight L ^ 0 > _ >
+slidingRight L 1 0 -> copyingRight L ^ 1 ^ 0 >
+slidingRight L 0 1 -> copyingRight L ^ 0 ^ 1 >
+slidingRight L 1 1 -> copyingRight L ^ 1 ^ 1 >
+ 
+finalize 1 _ _ -> finalize _ < _ ^ _ ^
+finalize 0 _ _ -> finalize _ < _ ^ _ ^
+finalize | _ _ -> finalize _ < _ ^ _ ^
+finalize L _ _ -> finalize _ < _ ^ _ ^
+finalize _ _ _ -> fin _ ^ _ < _ ^
+ 
+finalize' L | _ -> finalize L ^ _ ^ _ ^
+finalize' L 1 _ -> finalize L ^ 1 > _ ^
+finalize' L 0 _ -> finalize L ^ 0 > _ ^
+ 
+fin _ 0 _ -> fin 0 < _ < _ ^
+fin _ 1 _ -> fin 1 < _ < _ ^
+fin _ | _ -> fin | < _ < _ ^
+fin _ _ _ -> AC _ > _ ^ _ ^
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/reverse.out ===
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 0 -> s X >
+s 1 -> s Y >
+s _ -> getL _ <
+
+getL 0 -> getL 0 <
+getL 1 -> getL 1 <
+getL Z -> getL Z <
+getL X -> moveX Z >
+getL Y -> moveY Z >
+getL _ -> cleanZ _ >
+
+moveX 0 -> moveX 0 >
+moveX 1 -> moveX 1 >
+moveX Z -> moveX Z >
+moveX _ -> getL 0 <
+
+moveY 0 -> moveY 0 >
+moveY 1 -> moveY 1 >
+moveY Z -> moveY Z >
+moveY _ -> getL 1 <
+
+cleanZ Z -> cleanZ _ >
+cleanZ 0 -> ac 0 ^
+cleanZ 1 -> ac 1 ^
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/postfixlogic.out ===
+2
+ 
+S 1 _ -> S _ > 1 >
+S 0 _ -> S _ > 0 >
+S a _ -> and _ ^ _ <
+S o _ -> or _ ^ _ <
+S _ _ -> fin _ < _ <
+ 
+and _ 0 -> andZero _ ^ _ <
+and _ 1 -> andOne _ ^ _ <
+ 
+or _ 0 -> orZero _ ^ _ <
+or _ 1 -> orOne _ ^ _ <
+ 
+andZero _ 1 -> S _ > 0 >
+andZero _ 0 -> S _ > 0 >
+ 
+andOne _ 1 -> S _ > 1 >
+andOne _ 0 -> S _ > 0 >
+ 
+orZero _ 1 -> S _ > 1 >
+orZero _ 0 -> S _ > 0 >
+ 
+orOne _ 1 -> S _ > 1 >
+orOne _ 0 -> S _ > 1 >
+ 
+fin _ 0 -> AC 0 ^ _ ^
+fin _ 1 -> AC 1 ^ _ ^ 
+
+
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/factorialOld.out ===
+start: s
+accept: ac
+reject: rj
+blank: _
+    
+s 0 -> s X >
+s 1 -> s Y > 
+s _ -> copy* * <
+  
+copy* X -> copy* X <
+copy* Y -> copy* Y <
+copy* 1 -> move 1 >
+copy* 0 -> move 0 >
+copy* _ -> move _ >
+copy* * -> place$ * >
+  
+move X -> moveXF 0 > 
+move Y -> moveYF 1 > 
+  
+moveXF X -> moveXF X >
+moveXF Y -> moveXF Y >
+moveXF * -> placeXF * >
+  
+moveYF X -> moveYF X >
+moveYF Y -> moveYF Y >
+moveYF * -> placeYF * >
+  
+placeXF 1 -> placeXF 1 >
+placeXF 0 -> placeXF 0 >
+placeXF _ -> toLeft* 0 <
+  
+placeYF 1 -> placeYF 1 >
+placeYF 0 -> placeYF 0 >
+placeYF _ -> toLeft* 1 <
+  
+toLeft* 0 -> toLeft* 0 <
+toLeft* 1 -> toLeft* 1 <
+toLeft* * -> toLeft** * <
+  
+toLeft** 0 -> toLeft** 0 <
+toLeft** 1 -> toLeft** 1 <
+toLeft** X -> copy* X ^
+toLeft** Y -> copy* Y ^
+toLeft** _ -> to* _ >
+  
+to* 0 -> to* 0 >
+to* 1 -> to* 1 >
+to* * -> firstSub * >
+    
+firstSub 1 -> firstSub 1 >
+firstSub 0 -> firstSub 0 >
+firstSub _ -> firstSR _ <
+  
+secondSub 1 -> secondSub 1 >
+secondSub 0 -> secondSub 0 >
+secondSub _ -> secondSR _ <
+  
+secondSR 0 -> secondSR 1 <
+secondSR 1 -> place$ 0 >
+secondSR * -> cleanTape * >
+    
+firstSR 0 -> firstSR 1 <
+firstSR 1 -> secondSub 0 >
+firstSR * -> cleanTapeZero * >
+  
+cleanTapeZero 0 -> cleanTapeZero 0 >
+cleanTapeZero 1 -> cleanTapeZero 1 >
+cleanTapeZero _ -> cleaningZero _ <
+  
+cleaningZero 0 -> cleaningZero _ <
+cleaningZero 1 -> cleaningZero _ <
+cleaningZero * -> cleaningZero _ <
+cleaningZero _ -> ac 1 ^
+    
+place$ 0 -> place$ 0 >
+place$ 1 -> place$ 1 >
+place$ * -> place$ * >
+place$ _ -> goBack $ <
+    
+place# 0 -> place# 0 >
+place# 1 -> place# 1 >
+place# $ -> place# $ >
+place# * -> place# * >
+place# _ -> goBack # <
+place# # -> place% # >
+  
+place% 0 -> place% 0 >
+place% 1 -> place% 1 >
+place% _ -> copyFact % <
+  
+copyFact 0 -> copyFact 0 <
+copyFact 1 -> copyFact 1 <
+copyFact # -> copyFact # <
+copyFact $ -> copyFact' $ <
+copyFact % -> copyFact'' % <
+  
+copyFact' 0 -> copyFact' X <
+copyFact' 1 -> copyFact' Y <
+copyFact' * -> copyFactXY * >
+  
+copyFact'' 0 -> copyFact'' 0 <
+copyFact'' 1 -> copyFact'' 1 <
+copyFact'' # -> copyFact'' # <
+copyFact'' $ -> copyFact''' $ <
+  
+copyFact''' X -> copyFact''' X <
+copyFact''' Y -> copyFact''' Y <
+copyFact''' 0 -> copyFactXY 0 >
+copyFact''' 1 -> copyFactXY 1 >
+copyFact''' * -> copyFactXY * >
+  
+copyFactXY X -> copyFactX 0 >
+copyFactXY Y -> copyFactY 1 >
+copyFactXY $ -> checkMultiplier $ >
+  
+normalizeMult X -> normalizeMult 0 <
+normalizeMult Y -> normalizeMult 1 <
+normalizeMult * -> to$ * >
+  
+to$ 0 -> to$ 0 >
+to$ 1 -> to$ 1 >
+to$ $ -> checkMultiplier $ >
+  
+copyFactX 0 -> copyFactX 0 >
+copyFactX X -> copyFactX X >
+copyFactX Y -> copyFactX Y >
+copyFactX 1 -> copyFactX 1 >
+copyFactX $ -> copyFactX $ >
+copyFactX # -> copyFactX # >
+copyFactX % -> CFRX % >
+  
+copyFactY 0 -> copyFactY 0 >
+copyFactY 1 -> copyFactY 1 >
+copyFactY X -> copyFactY X >
+copyFactY Y -> copyFactY Y >
+copyFactY $ -> copyFactY $ >
+copyFactY # -> copyFactY # >
+copyFactY % -> CFRY % >
+  
+CFRX 0 -> CFRX 0 >
+CFRX 1 -> CFRX 1 > 
+CFRX _ -> copyFact 0 <
+  
+CFRY 0 -> CFRY 0 >
+CFRY 1 -> CFRY 1 >
+CFRY _ -> copyFact 1 <
+  
+moveNext 1 -> copyOne Y >
+moveNext 0 -> copyZero X >
+moveNext * -> toNormal * <
+    
+toNormal Y -> toNormal 1 <
+toNormal X -> toNormal 0 <
+toNormal # -> toNormal # <
+toNormal _ -> place# _ >
+toNormal $ -> subOne $ <
+    
+copyOne 0 -> copyOne 0 >
+copyOne 1 -> copyOne 1 >
+copyOne * -> placeOne * >
+    
+copyZero 0 -> copyZero 0 >
+copyZero 1 -> copyZero 1 >
+copyZero * -> placeZero * >
+    
+placeOne 1 -> placeOne 1 >
+placeOne 0 -> placeOne 0 >
+placeOne $ -> placeOne $ >
+placeOne _ -> goBack 1 <
+placeOne # -> placeOne # > 
+    
+placeZero 1 -> placeZero 1 >
+placeZero 0 -> placeZero 0 >
+placeZero $ -> placeZero $ >
+placeZero _ -> goBack 0 <
+placeZero # -> placeZero # >
+    
+goBack _ -> moveNext _ >
+goBack 1 -> goBack 1 <
+goBack 0 -> goBack 0 <
+goBack * -> goBack * <
+goBack $ -> goBack $ <
+goBack # -> goBack # <
+goBack X -> moveNext X >
+goBack Y -> moveNext Y > 
+    
+checkMultiplier 1 -> checkMultiplier 1 <
+checkMultiplier 0 -> checkMultiplier 0 <
+checkMultiplier # -> checkMultiplier # <
+checkMultiplier % -> checkMultiplier % <
+checkMultiplier $ -> subOne $ <
+    
+subOne 0 -> subOne 1 <
+subOne 1 -> checkRight 0 >
+subOne * -> checkFactRight * >
+  
+checkFactRight 0 -> checkFactRight 0 >
+checkFactRight 1 -> checkFactRight 1 >
+checkFactRight # -> checkFactRight # >
+checkFactRight $ -> checkFactRight $ >
+checkFactRight % -> checkFactRight % >
+checkFactRight _ -> subFactOne _ <
+checkFactRight Z -> to*L Z <
+  
+subFactOne 0 -> subFactOne 1 <
+subFactOne 1 -> prepare 0 >
+subFactOne % -> finR Z >
+  
+prepare 0 -> prepare 0 >
+prepare 1 -> prepare 1 >
+prepare _ -> factXY _ <
+  
+factXY 0 -> factXY X <
+factXY 1 -> factXY Y <
+factXY % -> getXY % >
+  
+getXY 0 -> getXY 0 >
+getXY 1 -> getXY 1 >
+getXY _ -> subFactOne _ <
+getXY # -> getXY # >
+getXY $ -> getXY $ >
+getXY % -> getXY % >
+getXY X -> copyFactRightX 0 <
+getXY Y -> copyFactRightY 1 <
+  
+finR 1 -> finR Z >
+finR _ -> finL _ <
+  
+finL Z -> finL _ <
+finL 0 -> finL _ <
+finL 1 -> finL _ <
+finL # -> finL _ <
+finL $ -> finL _ <
+finL * -> completing _ <
+  
+completing 0 -> completing 0 <
+completing 1 -> completing 1 <
+completing _ -> ac _ >
+  
+copyFactRightX 0 -> copyFactRightX 0 <
+copyFactRightX 1 -> copyFactRightX 1 <
+copyFactRightX % -> copyFactRightX % <
+copyFactRightX $ -> copyFactRightX $ <
+copyFactRightX # -> copyFactRightX # <
+copyFactRightX * -> copyFactRightX' * >
+copyFactRightX X -> copyFactRightX' X >
+copyFactRightX Y -> copyFactRightX' Y >
+  
+copyFactRightY 0 -> copyFactRightY 0 <
+copyFactRightY 1 -> copyFactRightY 1 <
+copyFactRightY % -> copyFactRightY % <
+copyFactRightY $ -> copyFactRightY $ <
+copyFactRightY # -> copyFactRightY # <
+copyFactRightY * -> copyFactRightY' * >
+copyFactRightY X -> copyFactRightY' X >
+copyFactRightY Y -> copyFactRightY' Y >
+  
+copyFactRightX' 0 -> getXY' X >
+copyFactRightX' 1 -> getXY' X >
+copyFactRightX' X -> copyFactRightX' X >
+copyFactRightX' Y -> copyFactRightX' Y >
+  
+copyFactRightY' 0 -> getXY' Y >
+copyFactRightY' 1 -> getXY' Y >
+copyFactRightY' X -> copyFactRightY' X >
+copyFactRightY' Y -> copyFactRightY' Y >
+  
+getXY' $ -> newCircle C >
+getXY' 0 -> getXY 0 >
+getXY' 1 -> getXY 1 >
+  
+newCircle 0 -> newCircle C >
+newCircle 1 -> newCircle C >
+newCircle # -> newCircle C >
+newCircle % -> newCircle C >
+newCircle X -> newCircle C >
+newCircle Y -> newCircle C >
+newCircle _ -> startNewCircle _ <
+  
+startNewCircle C -> startNewCircle _ <
+startNewCircle X -> startNewCircle 0 <
+startNewCircle Y -> startNewCircle 1 <
+startNewCircle * -> place$ * >
+  
+  
+to*L 0 -> to*L 0 <
+to*L 1 -> to*L 1 <
+to*L # -> to*L # <
+to*L $ -> to*L $ <
+to*L Z -> to*L Z <
+to*L % -> to*L % <
+to*L * -> cleanTape * >
+    
+cleanTape 1 -> cleanTape * >
+cleanTape 0 -> cleanTape * >
+cleanTape # -> cleanTape * >
+cleanTape $ -> cleanTape * >
+cleanTape % -> cleanTape * >
+cleanTape Z -> cleanTape * >
+cleanTape _ -> cleaning _ <
+    
+cleaning * -> cleaning _ <
+cleaning 0 -> cleaning 0 <
+cleaning 1 -> cleaning 1 <
+cleaning _ -> ac _ >
+    
+checkRight 0 -> checkRight 0 >
+checkRight 1 -> checkRight 1 >
+checkRight $ -> checkRight $ >
+checkRight _ -> checkRight _ >
+checkRight * -> checkRight * >
+checkRight # -> subOR # > 
+    
+subOR 1 -> subOR 1 >
+subOR 0 -> subOR 0 >
+subOR % -> subOneRight % <
+    
+subOneRight 0 -> subOneRight 1 <
+subOneRight 1 -> add 0 <
+subOneRight # -> copyNum # <  
+    
+add 1 -> add 1 <
+add 0 -> add 0 <
+add # -> add # <
+add $ -> add $ <
+add * -> addOne * <
+    
+addOne 1 -> added 0 <
+addOne 0 -> checkRight 1 >
+    
+added 0 -> checkRight 1 >
+added 1 -> added 0 <
+added _ -> checkRight 1 <
+    
+copyNum 0 -> copyNum 0 <
+copyNum 1 -> copyNum 1 <
+copyNum X -> copying X >
+copyNum Y -> copying Y >
+copyNum $ -> copying $ >
+copyNum # -> toRight # >
+    
+toRight 0 -> toRight 0 >
+toRight 1 -> toRight 1 >
+toRight # -> toRight # >
+toRight X -> toRight X >
+toRight Y -> toRight Y >
+toRight % -> toNormal % <
+    
+copying Y -> copying Y >
+copying X -> copying X >
+copying 1 -> moveY Y >
+copying 0 -> moveX X >
+copying # -> toRight # >
+    
+moveX # -> placeX # >
+moveX 0 -> moveX 0 >
+moveX 1 -> moveX 1 >
+    
+moveY # -> placeY # >
+moveY 0 -> moveY 0 >
+moveY 1 -> moveY 1 >
+    
+placeX 0 -> toLeft X <
+placeX 1 -> toLeft X <
+placeX _ -> toLeft X <
+placeX X -> placeX X > 
+placeX Y -> placeX Y >
+    
+placeY 0 -> toLeft Y <
+placeY 1 -> toLeft Y <
+placeY _ -> toLeft Y <
+placeY X -> placeY X >
+placeY Y -> placeY Y >
+placeY # -> placeY # >
+    
+toLeft 0 -> toLeft 0 <
+toLeft 1 -> toLeft 1 <
+toLeft X -> toLeft X <
+toLeft Y -> toLeft Y <
+toLeft # -> toLeft # <
+toLeft $ -> copyNum $ >
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/infixlogic.out ===
+2
+
+S 0 _ -> S _ > 0 >
+S 1 _ -> S _ > 1 >
+S o _ -> S _ > o >
+S ( _ -> S _ > ( >
+S ) _ -> ClBr _ ^ _ <
+S a _ -> and _ > _ <
+S _ _ -> fin _ < _ <
+
+and 1 0 -> S _ > 0 >
+and 1 1 -> S _ > 1 >
+and 0 1 -> S _ > 0 >
+and 0 0 -> S _ > 0 > 
+and ( 1 -> andBr _ > 1 >
+and ( 0 -> andBr _ > 0 >
+
+andBr 0 _ -> S 0 ^ a > 
+andBr 1 _ -> S 1 ^ a >
+andBr ( _ -> S ( ^ a >
+
+fin _ 1 -> fin 1 ^ _ <
+fin _ 0 -> fin 0 ^ _ <
+fin 1 o -> orOne _ ^ _ <
+fin 0 o -> orZero _ ^ _ <
+fin _ _ -> toFirst _ > _ >
+fin 0 _ -> AC 0 ^ _ ^
+fin 1 _ -> AC 1 ^ _ ^
+
+toFirst _ 0 -> AC 0 ^ _ ^
+toFirst _ 1 -> AC 1 ^ _ ^
+
+orOne _ 0 -> fin _ ^ 1 <
+orOne _ 1 -> fin _ ^ 1 <
+
+orZero _ 0 -> fin _ ^ 0 <
+orZero _ 1 -> fin _ ^ 1 <
+
+ClBr _ 1 -> ClBrOne _ ^ _ <
+ClBr _ 0 -> ClBr _ ^ _ <
+ClBr _ o -> ClBr _ ^ _ <
+ClBr _ ( -> S _ > 0 > 
+ClBr _ a -> andPrevZero _ ^ _ <
+
+ClBrOne _ 1 -> ClBrOne _ ^ _ <
+ClBrOne _ 0 -> ClBrOne _ ^ _ <
+ClBrOne _ o -> ClBrOne _ ^ _ <
+ClBrOne _ ( -> S _ > 1 >
+ClBrOne _ a -> andPrevOne _ ^ _ <
+
+andPrevZero _ 1 -> S _ > 0 >
+andPrevZero _ 0 -> S _ > 0 >
+
+andPrevOne _ 1 -> S _ > 1 >
+andPrevOne _ 0 -> S _ > 0 >
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/less.out ===
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 1 -> toRight 1 >
+s 0 -> toRight 0 >
+s X -> moveX _ >
+s Y -> moveY _ >
+s < -> rj < ^
+
+moveX X -> moveX X > 
+moveX Y -> moveX Y >
+moveX < -> checkX < >
+
+moveY X -> moveY X >
+moveY Y -> moveY Y >
+moveY < -> checkY < >
+
+checkX 0 -> checkX 0 >
+checkX 1 -> checkX 1 >
+checkX X -> getLeft 0 <
+checkX Y -> ac Y ^
+
+checkY 0 -> checkY 0 >
+checkY 1 -> checkY 1 >
+checkY X -> rj X ^
+checkY Y -> getLeft 1 <
+
+toRight 0 -> toRight 0 >
+toRight 1 -> toRight 1 >
+toRight < -> toRight < > 
+toRight _ -> Rr _ <
+toRight X -> Rr X <
+toRight Y -> Rr Y <
+
+Rr 0 -> toLeft X <
+Rr 1 -> toLeft Y <
+Rr < -> checkLenLeft < <
+
+toLeft _ -> Lr _ >
+toLeft 0 -> toLeft 0 <
+toLeft 1 -> toLeft 1 <
+toLeft < -> toLeft < <
+toLeft X -> Lr X >
+toLeft Y -> Lr Y >
+
+checkLenLeft 0 -> rj 0 ^
+checkLenLeft 1 -> rj 0 ^
+checkLenLeft X -> getLeft X <
+checkLenLeft Y -> getLeft Y <
+
+getLeft X -> getLeft X <
+getLeft Y -> getLeft Y <
+getLeft < -> getLeft < <
+getLeft _ -> s _ >
+getLeft 1 -> getLeft 1 <
+getLeft 0 -> getLeft 0 <
+
+Lr 0 -> toRight X >
+Lr 1 -> toRight Y >
+Lr < -> ac < ^
+
+  
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/multiplication.out ===
+start: s
+accept: ac
+reject: rj
+blank: _
+  
+s 0 -> s 0 >
+s 1 -> s 1 > 
+s * -> firstSub * >
+  
+firstSub 1 -> firstSub 1 >
+firstSub 0 -> firstSub 0 >
+firstSub _ -> firstSR _ <
+  
+firstSR 0 -> firstSR 1 <
+firstSR 1 -> place$ 0 >
+firstSR * -> cleanTapeZero * >
+
+cleanTapeZero 0 -> cleanTapeZero 0 >
+cleanTapeZero 1 -> cleanTapeZero 1 >
+cleanTapeZero _ -> cleaningZero _ <
+
+cleaningZero 0 -> cleaningZero _ <
+cleaningZero 1 -> cleaningZero _ <
+cleaningZero * -> cleaningZero _ <
+cleaningZero _ -> ac 0 ^
+  
+place$ 0 -> place$ 0 >
+place$ 1 -> place$ 1 >
+place$ * -> place$ * >
+place$ _ -> goBack $ <
+  
+place# 0 -> place# 0 >
+place# 1 -> place# 1 >
+place# $ -> place# $ >
+place# * -> place# * >
+place# _ -> goBack # <
+place# # -> checkMultiplier # <
+  
+moveNext 1 -> copyOne Y >
+moveNext 0 -> copyZero X >
+moveNext * -> toNormal * <
+  
+toNormal Y -> toNormal 1 <
+toNormal X -> toNormal 0 <
+toNormal # -> toNormal # <
+toNormal _ -> place# _ >
+toNormal $ -> subOne $ <
+  
+copyOne 0 -> copyOne 0 >
+copyOne 1 -> copyOne 1 >
+copyOne * -> placeOne * >
+  
+copyZero 0 -> copyZero 0 >
+copyZero 1 -> copyZero 1 >
+copyZero * -> placeZero * >
+  
+placeOne 1 -> placeOne 1 >
+placeOne 0 -> placeOne 0 >
+placeOne $ -> placeOne $ >
+placeOne _ -> goBack 1 <
+placeOne # -> placeOne # > 
+  
+placeZero 1 -> placeZero 1 >
+placeZero 0 -> placeZero 0 >
+placeZero $ -> placeZero $ >
+placeZero _ -> goBack 0 <
+placeZero # -> placeZero # >
+  
+goBack _ -> moveNext _ >
+goBack 1 -> goBack 1 <
+goBack 0 -> goBack 0 <
+goBack * -> goBack * <
+goBack $ -> goBack $ <
+goBack # -> goBack # <
+goBack X -> moveNext X >
+goBack Y -> moveNext Y > 
+  
+checkMultiplier 1 -> checkMultiplier 1 <
+checkMultiplier 0 -> checkMultiplier 0 <
+checkMultiplier # -> checkMultiplier # <
+checkMultiplier $ -> subOne $ <
+  
+subOne 0 -> subOne 1 <
+subOne 1 -> checkRight 0 >
+subOne * -> cleanTape * >
+  
+cleanTape 1 -> cleanTape * >
+cleanTape 0 -> cleanTape * >
+cleanTape # -> cleanTape * >
+cleanTape $ -> cleanTape * >
+cleanTape _ -> cleaning _ <
+  
+cleaning * -> cleaning _ <
+cleaning 0 -> cleaning 0 <
+cleaning 1 -> cleaning 1 <
+cleaning _ -> ac _ >
+  
+checkRight 0 -> checkRight 0 >
+checkRight 1 -> checkRight 1 >
+checkRight $ -> checkRight $ >
+checkRight _ -> checkRight _ >
+checkRight * -> checkRight * >
+checkRight # -> subOR # > 
+  
+subOR 1 -> subOR 1 >
+subOR 0 -> subOR 0 >
+subOR _ -> subOneRight _ <
+  
+subOneRight 0 -> subOneRight 1 <
+subOneRight 1 -> add 0 <
+subOneRight # -> copyNum # <  
+  
+add 1 -> add 1 <
+add 0 -> add 0 <
+add # -> add # <
+add $ -> add $ <
+add * -> addOne * <
+  
+addOne 1 -> added 0 <
+addOne 0 -> checkRight 1 >
+  
+added 0 -> checkRight 1 >
+added 1 -> added 0 <
+added _ -> checkRight 1 <
+  
+copyNum 0 -> copyNum 0 <
+copyNum 1 -> copyNum 1 <
+copyNum X -> copying X >
+copyNum Y -> copying Y >
+copyNum $ -> copying $ >
+copyNum # -> toRight # >
+  
+toRight 0 -> toRight 0 >
+toRight 1 -> toRight 1 >
+toRight # -> toRight # >
+toRight X -> toRight X >
+toRight Y -> toRight Y >
+toRight _ -> toNormal _ <
+  
+copying Y -> copying Y >
+copying X -> copying X >
+copying 1 -> moveY Y >
+copying 0 -> moveX X >
+copying # -> toRight # >
+  
+moveX # -> placeX # >
+moveX 0 -> moveX 0 >
+moveX 1 -> moveX 1 >
+  
+moveY # -> placeY # >
+moveY 0 -> moveY 0 >
+moveY 1 -> moveY 1 >
+  
+placeX 0 -> toLeft X <
+placeX 1 -> toLeft X <
+placeX _ -> toLeft X <
+placeX X -> placeX X > 
+placeX Y -> placeX Y >
+  
+placeY 0 -> toLeft Y <
+placeY 1 -> toLeft Y <
+placeY _ -> toLeft Y <
+placeY X -> placeY X >
+placeY Y -> placeY Y >
+placeY # -> placeY # >
+  
+toLeft 0 -> toLeft 0 <
+toLeft 1 -> toLeft 1 <
+toLeft X -> toLeft X <
+toLeft Y -> toLeft Y <
+toLeft # -> toLeft # <
+toLeft $ -> copyNum $ >
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/scr.bash ===
+#!/bin/bash
+
+# Переменная для хранения имени выходного файла
+OUTPUT_FILE="directory_structure.txt"
+
+# Вывод структуры текущей директории с помощью ls -a и tree -a
+{
+  echo "=== Структура каталога (ls -a) ==="
+  ls -a
+  echo ""
+  
+  echo "=== Структура каталога (tree -a) ==="
+  tree -a
+  echo ""
+} > "$OUTPUT_FILE"
+
+# Рекурсивный проход по всем файлам и каталогам в текущей директории
+find "$(pwd)" -type f | while read -r file; do
+  # Проверяем, является ли файл небинарным
+  if file "$file" | grep -q "text"; then
+    {
+      echo "=== Содержимое файла: $file ==="
+      cat "$file"
+      echo ""
+    } >> "$OUTPUT_FILE"
+  fi
+done
+
+echo "Результат записан в файл $OUTPUT_FILE"
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Turing Machine Practice/directory_structure.txt ===
+

@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: info.kgeorgiy.ja.gusev.jarimplementor.JarImplementor
-Implementation-Vendor: Gusev Sergei 
-Class-Path: ../../java-advanced-2024/artifacts/info.kgeorgiy.java.advanced.implementor.jar
-
