@@ -37,3 +37,7 @@
 Пример запуска:
 `python3 gen.py example helloworld`
 `python3 gen.py zero/zero`
+
+---
+
+Автор: [BudAlNik](https://github.com/BudAlNik/turing-machine-visualizer).
