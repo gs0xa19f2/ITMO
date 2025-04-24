@@ -1,0 +1,1754 @@
+=== Структура каталога (ls -a) ===
+.
+..
+build.gradle.kts
+directory_structure.txt
+.editorconfig
+.github
+.gitignore
+gradle
+gradle.properties
+gradlew
+gradlew.bat
+.idea
+README.md
+scr.bash
+settings.gradle.kts
+src
+
+=== Структура каталога (tree -a) ===
+.
+├── build.gradle.kts
+├── directory_structure.txt
+├── .editorconfig
+├── .github
+│   └── workflows
+│       └── gradle-build.yml
+├── .gitignore
+├── gradle
+│   └── wrapper
+│       ├── gradle-wrapper.jar
+│       └── gradle-wrapper.properties
+├── gradle.properties
+├── gradlew
+├── gradlew.bat
+├── .idea
+│   └── .gitignore
+├── README.md
+├── scr.bash
+├── settings.gradle.kts
+└── src
+    ├── main
+    │   └── kotlin
+    │       └── chatbot
+    │           ├── api
+    │           │   ├── ChatBot.kt
+    │           │   ├── ChatContextsManager.kt
+    │           │   ├── ChatId.kt
+    │           │   ├── Client.kt
+    │           │   ├── Keyboard.kt
+    │           │   ├── LogLevel.kt
+    │           │   └── Message.kt
+    │           └── dsl
+    │               ├── Behaviour.kt
+    │               ├── builder
+    │               │   ├── IntoBuilder.kt
+    │               │   ├── KeyboardBuilder.kt
+    │               │   ├── MessageBuilder.kt
+    │               │   └── RowBuilder.kt
+    │               ├── ChatBotImpl.kt
+    │               ├── handler
+    │               │   └── MessageHandler.kt
+    │               └── MessageProcessor.kt
+    └── test
+        └── kotlin
+            └── chatbot
+                └── dsl
+                    ├── BaseTests.kt
+                    └── IncorrectContextTests.kt
+
+18 directories, 31 files
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/.editorconfig ===
+[*]
+indent_style = space
+indent_size = 4
+max_line_length = 120
+
+[*.{kt,kts}]
+ktlint_code_style = ktlint_official
+ktlint_standard_no-wildcard-imports = disabled
+ij_kotlin_imports_layout = *
+insert_final_newline = true
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/.github/workflows/gradle-build.yml ===
+name: Kotlin hw 4 check
+
+on:
+    pull_request:
+        types:
+        - opened
+        - synchronize
+
+jobs:
+    build:
+        runs-on: [self-hosted, kotlin]
+        timeout-minutes: 10
+        steps:
+        - uses: actions/checkout@v3
+        - uses: actions/setup-java@v3
+          with:
+              java-version: 17
+              distribution: adopt
+        - name: Setup Gradle
+          uses: gradle/gradle-build-action@v2
+        - name: Build with Gradle
+          run: ./gradlew build
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/.gitignore ===
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### IntelliJ IDEA ###
+.idea/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/.idea/.gitignore ===
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/README.md ===
+# Задание 4. Chat bot DSL
+
+Реализуйте DSL для декларативного описания функциональности чат ботов (в Telegram, VK или других мессенджеров).
+
+Вам дано базовое api для работы с ботом (пакет `chatbot.api`):
+
+* Интерфейс `Client`, скрывающий детали взаимодействия с api мессенджеров
+* Интерфейс `ChatContextsManager`, хранит внутри состояние определенного чата.
+  Например, пользователь выбрал какой-то пункт меню и теперь должен нажать какую-то кнопку подменю.
+
+Реализуйте DSL по заданию ниже в пакете `chatbot.dsl`.
+
+Готовое решение в ветке `solution` запушьте в гитхаб и сделайте PR со своим ФИО в названии.
+
+## Базовая настройка
+
+Создайте конструкцию `chatBot(client: Client)` для определения бота, возвращающая класс, реализующий
+интерфейс `ChatBot`.
+
+* Внутри `chatBot` добавьте возможность настраивать уровень логирования
+    * через конструкцию `use` (`use(LogLevel.Error)`)
+    * через унарный плюс (`+LogLevel.Error`)
+
+```kotlin
+val bot = chatBot(testClient) {
+    use(LogLevel.INFO)
+}
+```
+
+или
+
+```kotlin
+val bot = chatBot(testClient) {
+    +LogLevel.INFO
+}
+```
+
+## Базовое поведение
+
+Внутри `chatBot` реализуйте конструкцию `behaviour` для определения поведения бота. Определенные ниже конструкции далее
+будем называть обработчиками.
+
+* конструкцию `onCommand(command: String)` для определения поведения бота при получении сообщения,
+  содержащего `/${command}` в качестве первого слова в сообщении
+* конструкцию `onMessage(predicate: ChatBot.(Message) -> Bool)` для определения поведения бота при получении сообщения,
+  удовлетворяющего предикату
+* конструкции `onMessagePrefix(preffix: String)`, `onMessageContains(text: String)`
+  и `onMessage(messageTextExactly: String)` для определения поведения бота при получении сообщения, текст которого
+  соответствует критерию
+* конструкцию `onMessage` для определения поведения бота при получении сообщения, не удовлетворяющего предыдущим
+  критериям
+
+В качестве функции для обработки соответствующих событий используйте функцию с типом `MessageProcessor`.
+
+При обработке сообщения должен выбираться соответствующий обработчик, если подходит несколько обработчиков, то должен
+выбираться первый наиболее подходящий.
+
+```kotlin
+val bot = chatBot(testClient) {
+    use(LogLevel.INFO)
+
+    behaviour {
+        onCommand("help") {
+            client.sendMessage(message.chatId, "How can i help you?")
+        }
+
+        onMessage("ping") {
+            client.sendMessage(message.chatId, "pong", replyMessageId = message.id)
+        }
+    }
+}
+```
+
+## Контексты внутри чатов
+
+Разработайте возможность в каждом чате с ботом хранить некоторый контекст.
+Это полезно при обработке последовательности сообщений пользователя.
+
+* Внутри `chatBot` поддержите возможность подключения менеджера контекстов пользователей бота (объекта
+  интерфейса `ChatContextsManager`)
+    * через оператор присваивания (`contextManager = anyContextManager`)
+    * через конструкцию `use` (`use(otherContextManager)`)
+
+* Внутри `behaviour` поддержите возможность объявлять некоторые обработчики, которые должны срабатывать только, если чат
+  имеет некоторый контекст
+    * для конкретного экземпляра контекста через конструкцию `into` (`SomeChatContext.into { ... }`)
+    * для всех контекста, имеющих некоторый тип через `into<SomeChatContext>` (`into<SomeChatContext> { ... }`)
+
+```kotlin
+object AskNameContext : ChatContext
+class WithNameContext(val name: String) : ChatContext
+
+val bot = chatBot {
+    use(testClient)
+
+    behaviour {
+        into<NamedUserContext> {
+            onMessage {
+                client.sendMessage(message.chatId, "Hello, ${this.context.name}!")
+            }
+        }
+
+        AskNameContext.into {
+            onMessage {
+                client.sendMessage(message.chatId, "ok")
+                setContext(NamedUserContext(message.text))
+            }
+        }
+
+        onCommand("start") {
+            client.sendMessage(message.chatId, "Hello! Say your name!")
+            setContext(AskNameContext)
+        }
+    }
+}
+```
+
+## Билдер сообщений
+
+Так же требуется поддержать dsl для отправки сообщения, с поддержкой кнопок.
+
+Для работы с клавиатурой необходимо использовать параметр `keyboard` при отправке сообщения. 
+* Клавиатуру можно убрать, отправив `Keyboard.Remove`
+* Клавиатура можно настроить с помощью `Keyboard.Markup`
+
+В рамках dsl необходимо подержать:
+
+* Блок `sendMessage(chatId: ChatId.Id) {}` в котором настраивается сообщение,
+* Вызов `removeKeyboard()` должен устанавливать клавиатуру в значение `Keyboard.Remove` при отправке,
+* Блок `withKeyboard {}` должен настраивать клавиатуру и устанавливать её в соответсвующее значение `Keyboard.Markup`
+  при отправке,
+* Блок `row {}` должен добавлять новую строку в конец клавиатуры,
+* Вызов `button(text = "text")` должен добавлять кнопку в конец строки,
+* Вызов `- "text"` должен добавлять кнопку в конец строки,
+
+Так же должно быть доступно напрямую задать:
+
+* разметку всей клавиатуры через матрицу, присвоив значение переменной `keyboard`,
+* разметку строки, добавив её в массив в переменной `keyboard`
+
+Пустые сообщения (без текста и клавиатуры или с пустой клавиатурой) должны игнорироваться
+
+```kotlin
+val bot = chatBot(testClient) {
+    behaviour {
+        onCommand("help") {
+            sendMessage(message.chatId) {
+                text = "How can i help you?" // "" by default
+                replyTo = message.id // must be available
+
+                removeKeyboard() // will send Keyboard.Remove
+                // or
+                withKeyboard {
+                    oneTime = true // false by default
+                    
+                    keyboard = mutableListOf(mutableListOf(Keyboard.Button(text = "1:1"), Keyboard.Button(text = "1:2")))
+                    keyboard.add(mutableListOf(Keyboard.Button(text = "2:1"), Keyboard.Button(text = "2:2")))
+
+                    row {
+                        button(text = "3:1")
+                        button(text = "3:2")
+                    }
+                    row {
+                        -"4:1"
+                        -"4:2"
+                    }
+                }
+                // will send:
+                // Keyboard.Murkup(
+                //   oneTime = true,
+                //   keyboard = listOf(
+                //     listOf(Keyboard.Button(text = "1:1"), Keyboard.Button(text = "1:2"))),
+                //     listOf(Keyboard.Button(text = "2:1"), Keyboard.Button(text = "2:2"))),
+                //     listOf(Keyboard.Button(text = "3:1"), Keyboard.Button(text = "3:2"))),
+                //     listOf(Keyboard.Button(text = "4:1"), Keyboard.Button(text = "4:2"))),
+                //   ),
+                // )
+            }
+        }
+    }
+}
+
+```
+
+## (Бонусное) Предикатные контексты для обработчиков
+
+Определим `MessageProcessorPredicate` следующим образом
+
+```kotlin
+val IS_ADMIN: MessageProcessorPredicate = { (it.chatId as? ChatId.Id)?.id == 316671439L }
+```
+
+* Реализуйте возможность определять обработчики для сообщений, удовлетворяющих предикатам при помощи
+  конструкции `MessageProcessorPredicate.into`.
+
+```kotlin
+
+val IS_ADMIN: MessageProcessorPredicate = { (it.chatId as? api.ChatId.Id)?.id == 316671439L }
+chatBot(client) {
+    behaviour {
+        IS_ADMIN.into {
+            onCommand("ban_user") {
+                // ...
+            }
+
+            // and other admin commands
+        }
+
+        onCommand("help") {
+            // ...
+        }
+
+        // and other user commands
+    }
+}
+```
+
+Обратите внимание, что в отличие от контекстов `into` конструкции могут вкладываться друг в друга, то есть
+внутри `MessageProcessorPredicate.into` может быть еще одна такая же конструкция.
+В таком случае обработчики должны срабатывать, когда все необходимые предикаты выполняются.
+
+* Переопределите операцию умножения для двух контекстов: в таком случае обработчики должны выполняться, когда оба
+  предиката выполняются
+
+```kotlin
+val IS_ADMIN: MessageProcessorPredicate = { (it.chatId as? api.ChatId.Id)?.id == 316671439L }
+val IS_EVEN_MESSAGE_ID: MessageProcessorPredicate = { it.id % 2 == 0L }
+
+chatBot(client) {
+    behaviour {
+        (IS_ADMIN * IS_EVEN_MESSAGE_ID).into {
+            // ... 
+        }
+    }
+}
+```
+
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/build.gradle.kts ===
+plugins {
+    kotlin("jvm") version "1.9.10"
+    application
+    id("org.jlleitschuh.gradle.ktlint") version "11.6.0"
+}
+
+group = "ru.itmo.ct.kotlin"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation(kotlin("test"))
+    testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.5.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+application {
+    mainClass.set("MainKt")
+}
+
+ktlint {
+    version = "0.50.0"
+}
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/gradle.properties ===
+kotlin.code.style=official
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/gradle/wrapper/gradle-wrapper.properties ===
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-8.4-bin.zip
+networkTimeout=10000
+validateDistributionUrl=true
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/gradlew ===
+#!/bin/sh
+
+#
+# Copyright © 2015-2021 the original authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+##############################################################################
+#
+#   Gradle start up script for POSIX generated by Gradle.
+#
+#   Important for running:
+#
+#   (1) You need a POSIX-compliant shell to run this script. If your /bin/sh is
+#       noncompliant, but you have some other compliant shell such as ksh or
+#       bash, then to run this script, type that shell name before the whole
+#       command line, like:
+#
+#           ksh Gradle
+#
+#       Busybox and similar reduced shells will NOT work, because this script
+#       requires all of these POSIX shell features:
+#         * functions;
+#         * expansions «$var», «${var}», «${var:-default}», «${var+SET}»,
+#           «${var#prefix}», «${var%suffix}», and «$( cmd )»;
+#         * compound commands having a testable exit status, especially «case»;
+#         * various built-in commands including «command», «set», and «ulimit».
+#
+#   Important for patching:
+#
+#   (2) This script targets any POSIX shell, so it avoids extensions provided
+#       by Bash, Ksh, etc; in particular arrays are avoided.
+#
+#       The "traditional" practice of packing multiple parameters into a
+#       space-separated string is a well documented source of bugs and security
+#       problems, so this is (mostly) avoided, by progressively accumulating
+#       options in "$@", and eventually passing that to Java.
+#
+#       Where the inherited environment variables (DEFAULT_JVM_OPTS, JAVA_OPTS,
+#       and GRADLE_OPTS) rely on word-splitting, this is performed explicitly;
+#       see the in-line comments for details.
+#
+#       There are tweaks for specific operating systems such as AIX, CygWin,
+#       Darwin, MinGW, and NonStop.
+#
+#   (3) This script is generated from the Groovy template
+#       https://github.com/gradle/gradle/blob/HEAD/subprojects/plugins/src/main/resources/org/gradle/api/internal/plugins/unixStartScript.txt
+#       within the Gradle project.
+#
+#       You can find Gradle at https://github.com/gradle/gradle/.
+#
+##############################################################################
+
+# Attempt to set APP_HOME
+
+# Resolve links: $0 may be a link
+app_path=$0
+
+# Need this for daisy-chained symlinks.
+while
+    APP_HOME=${app_path%"${app_path##*/}"}  # leaves a trailing /; empty if no leading path
+    [ -h "$app_path" ]
+do
+    ls=$( ls -ld "$app_path" )
+    link=${ls#*' -> '}
+    case $link in             #(
+      /*)   app_path=$link ;; #(
+      *)    app_path=$APP_HOME$link ;;
+    esac
+done
+
+# This is normally unused
+# shellcheck disable=SC2034
+APP_BASE_NAME=${0##*/}
+# Discard cd standard output in case $CDPATH is set (https://github.com/gradle/gradle/issues/25036)
+APP_HOME=$( cd "${APP_HOME:-./}" > /dev/null && pwd -P ) || exit
+
+# Use the maximum available, or set MAX_FD != -1 to use that value.
+MAX_FD=maximum
+
+warn () {
+    echo "$*"
+} >&2
+
+die () {
+    echo
+    echo "$*"
+    echo
+    exit 1
+} >&2
+
+# OS specific support (must be 'true' or 'false').
+cygwin=false
+msys=false
+darwin=false
+nonstop=false
+case "$( uname )" in                #(
+  CYGWIN* )         cygwin=true  ;; #(
+  Darwin* )         darwin=true  ;; #(
+  MSYS* | MINGW* )  msys=true    ;; #(
+  NONSTOP* )        nonstop=true ;;
+esac
+
+CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
+
+
+# Determine the Java command to use to start the JVM.
+if [ -n "$JAVA_HOME" ] ; then
+    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
+        # IBM's JDK on AIX uses strange locations for the executables
+        JAVACMD=$JAVA_HOME/jre/sh/java
+    else
+        JAVACMD=$JAVA_HOME/bin/java
+    fi
+    if [ ! -x "$JAVACMD" ] ; then
+        die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
+
+Please set the JAVA_HOME variable in your environment to match the
+location of your Java installation."
+    fi
+else
+    JAVACMD=java
+    if ! command -v java >/dev/null 2>&1
+    then
+        die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+
+Please set the JAVA_HOME variable in your environment to match the
+location of your Java installation."
+    fi
+fi
+
+# Increase the maximum file descriptors if we can.
+if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
+    case $MAX_FD in #(
+      max*)
+        # In POSIX sh, ulimit -H is undefined. That's why the result is checked to see if it worked.
+        # shellcheck disable=SC3045
+        MAX_FD=$( ulimit -H -n ) ||
+            warn "Could not query maximum file descriptor limit"
+    esac
+    case $MAX_FD in  #(
+      '' | soft) :;; #(
+      *)
+        # In POSIX sh, ulimit -n is undefined. That's why the result is checked to see if it worked.
+        # shellcheck disable=SC3045
+        ulimit -n "$MAX_FD" ||
+            warn "Could not set maximum file descriptor limit to $MAX_FD"
+    esac
+fi
+
+# Collect all arguments for the java command, stacking in reverse order:
+#   * args from the command line
+#   * the main class name
+#   * -classpath
+#   * -D...appname settings
+#   * --module-path (only if needed)
+#   * DEFAULT_JVM_OPTS, JAVA_OPTS, and GRADLE_OPTS environment variables.
+
+# For Cygwin or MSYS, switch paths to Windows format before running java
+if "$cygwin" || "$msys" ; then
+    APP_HOME=$( cygpath --path --mixed "$APP_HOME" )
+    CLASSPATH=$( cygpath --path --mixed "$CLASSPATH" )
+
+    JAVACMD=$( cygpath --unix "$JAVACMD" )
+
+    # Now convert the arguments - kludge to limit ourselves to /bin/sh
+    for arg do
+        if
+            case $arg in                                #(
+              -*)   false ;;                            # don't mess with options #(
+              /?*)  t=${arg#/} t=/${t%%/*}              # looks like a POSIX filepath
+                    [ -e "$t" ] ;;                      #(
+              *)    false ;;
+            esac
+        then
+            arg=$( cygpath --path --ignore --mixed "$arg" )
+        fi
+        # Roll the args list around exactly as many times as the number of
+        # args, so each arg winds up back in the position where it started, but
+        # possibly modified.
+        #
+        # NB: a `for` loop captures its iteration list before it begins, so
+        # changing the positional parameters here affects neither the number of
+        # iterations, nor the values presented in `arg`.
+        shift                   # remove old arg
+        set -- "$@" "$arg"      # push replacement arg
+    done
+fi
+
+
+# Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
+
+# Collect all arguments for the java command;
+#   * $DEFAULT_JVM_OPTS, $JAVA_OPTS, and $GRADLE_OPTS can contain fragments of
+#     shell script including quotes and variable substitutions, so put them in
+#     double quotes to make sure that they get re-expanded; and
+#   * put everything else in single quotes, so that it's not re-expanded.
+
+set -- \
+        "-Dorg.gradle.appname=$APP_BASE_NAME" \
+        -classpath "$CLASSPATH" \
+        org.gradle.wrapper.GradleWrapperMain \
+        "$@"
+
+# Stop when "xargs" is not available.
+if ! command -v xargs >/dev/null 2>&1
+then
+    die "xargs is not available"
+fi
+
+# Use "xargs" to parse quoted args.
+#
+# With -n1 it outputs one arg per line, with the quotes and backslashes removed.
+#
+# In Bash we could simply go:
+#
+#   readarray ARGS < <( xargs -n1 <<<"$var" ) &&
+#   set -- "${ARGS[@]}" "$@"
+#
+# but POSIX shell has neither arrays nor command substitution, so instead we
+# post-process each arg (as a line of input to sed) to backslash-escape any
+# character that might be a shell metacharacter, then use eval to reverse
+# that process (while maintaining the separation between arguments), and wrap
+# the whole thing up as a single "set" statement.
+#
+# This will of course break if any of these variables contains a newline or
+# an unmatched quote.
+#
+
+eval "set -- $(
+        printf '%s\n' "$DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS" |
+        xargs -n1 |
+        sed ' s~[^-[:alnum:]+,./:=@_]~\\&~g; ' |
+        tr '\n' ' '
+    )" '"$@"'
+
+exec "$JAVACMD" "$@"
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/gradlew.bat ===
+@rem
+@rem Copyright 2015 the original author or authors.
+@rem
+@rem Licensed under the Apache License, Version 2.0 (the "License");
+@rem you may not use this file except in compliance with the License.
+@rem You may obtain a copy of the License at
+@rem
+@rem      https://www.apache.org/licenses/LICENSE-2.0
+@rem
+@rem Unless required by applicable law or agreed to in writing, software
+@rem distributed under the License is distributed on an "AS IS" BASIS,
+@rem WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+@rem See the License for the specific language governing permissions and
+@rem limitations under the License.
+@rem
+
+@if "%DEBUG%"=="" @echo off
+@rem ##########################################################################
+@rem
+@rem  Gradle startup script for Windows
+@rem
+@rem ##########################################################################
+
+@rem Set local scope for the variables with windows NT shell
+if "%OS%"=="Windows_NT" setlocal
+
+set DIRNAME=%~dp0
+if "%DIRNAME%"=="" set DIRNAME=.
+@rem This is normally unused
+set APP_BASE_NAME=%~n0
+set APP_HOME=%DIRNAME%
+
+@rem Resolve any "." and ".." in APP_HOME to make it shorter.
+for %%i in ("%APP_HOME%") do set APP_HOME=%%~fi
+
+@rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+set DEFAULT_JVM_OPTS="-Xmx64m" "-Xms64m"
+
+@rem Find java.exe
+if defined JAVA_HOME goto findJavaFromJavaHome
+
+set JAVA_EXE=java.exe
+%JAVA_EXE% -version >NUL 2>&1
+if %ERRORLEVEL% equ 0 goto execute
+
+echo.
+echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+echo.
+echo Please set the JAVA_HOME variable in your environment to match the
+echo location of your Java installation.
+
+goto fail
+
+:findJavaFromJavaHome
+set JAVA_HOME=%JAVA_HOME:"=%
+set JAVA_EXE=%JAVA_HOME%/bin/java.exe
+
+if exist "%JAVA_EXE%" goto execute
+
+echo.
+echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
+echo.
+echo Please set the JAVA_HOME variable in your environment to match the
+echo location of your Java installation.
+
+goto fail
+
+:execute
+@rem Setup the command line
+
+set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
+
+
+@rem Execute Gradle
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %*
+
+:end
+@rem End local scope for the variables with windows NT shell
+if %ERRORLEVEL% equ 0 goto mainEnd
+
+:fail
+rem Set variable GRADLE_EXIT_CONSOLE if you need the _script_ return code instead of
+rem the _cmd.exe /c_ return code!
+set EXIT_CODE=%ERRORLEVEL%
+if %EXIT_CODE% equ 0 set EXIT_CODE=1
+if not ""=="%GRADLE_EXIT_CONSOLE%" exit %EXIT_CODE%
+exit /b %EXIT_CODE%
+
+:mainEnd
+if "%OS%"=="Windows_NT" endlocal
+
+:omega
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/settings.gradle.kts ===
+rootProject.name = "chat-bot-dsl"
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/src/main/kotlin/chatbot/api/ChatBot.kt ===
+package chatbot.api
+
+interface ChatBot {
+    fun processMessages(message: Message)
+
+    val logLevel: LogLevel
+}
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/src/main/kotlin/chatbot/api/ChatContextsManager.kt ===
+package chatbot.api
+
+interface ChatContext
+
+interface ChatContextsManager {
+    fun getContext(chatId: ChatId): ChatContext?
+    fun setContext(chatId: ChatId, newState: ChatContext?)
+}
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/src/main/kotlin/chatbot/api/ChatId.kt ===
+package chatbot.api
+
+sealed interface ChatId {
+    data class Id(val id: Long) : ChatId
+}
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/src/main/kotlin/chatbot/api/Client.kt ===
+package chatbot.api
+
+interface Client {
+    fun sendMessage(
+        chatId: ChatId,
+        text: String,
+        keyboard: Keyboard? = null,
+        replyMessageId: MessageId? = null,
+    )
+}
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/src/main/kotlin/chatbot/api/Keyboard.kt ===
+package chatbot.api
+
+sealed interface Keyboard {
+    data object Remove : Keyboard
+    data class Markup(
+        val oneTime: Boolean,
+        val keyboard: List<List<Button>>,
+    ) : Keyboard
+
+    data class Button(val text: String)
+}
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/src/main/kotlin/chatbot/api/LogLevel.kt ===
+package chatbot.api
+
+enum class LogLevel { ERROR, INFO, }
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/src/main/kotlin/chatbot/api/Message.kt ===
+package chatbot.api
+
+typealias MessageId = Long
+
+data class Message(
+    val id: MessageId,
+    val chatId: ChatId,
+    val text: String,
+    val replyMessageId: MessageId? = null,
+)
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/src/main/kotlin/chatbot/dsl/MessageProcessor.kt ===
+package chatbot.dsl
+
+import chatbot.api.ChatContext
+import chatbot.api.Client
+import chatbot.api.Message
+
+class MessageProcessorContext<C : ChatContext?>(
+    val message: Message,
+    val client: Client,
+    val context: C,
+    val setContext: (c: ChatContext?) -> Unit,
+)
+
+typealias MessageProcessor<C> = MessageProcessorContext<C>.() -> Unit
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/src/main/kotlin/chatbot/dsl/Behaviour.kt ===
+package chatbot.dsl
+
+import chatbot.api.ChatContext
+import chatbot.api.ChatContextsManager
+import chatbot.api.Client
+import chatbot.api.Message
+import chatbot.dsl.builder.IntoBuilder
+import chatbot.dsl.handler.MessageHandler
+
+@ChatMarker
+class Behaviour {
+    val messageHandlers = mutableListOf<MessageHandler<ChatContext?>>()
+
+    fun onCommand(
+        command: String,
+        init: @ChatMarker MessageProcessor<ChatContext?>,
+    ) = onMessage({ it.text.startsWith("/") && it.text.drop(1).startsWith(command) }, init)
+
+    fun onMessagePrefix(
+        prefix: String,
+        init: @ChatMarker MessageProcessor<ChatContext?>,
+    ) = onMessage({ it.text.startsWith(prefix) }, init)
+
+    fun onMessageContains(
+        text: String,
+        init: @ChatMarker MessageProcessor<ChatContext?>,
+    ) = onMessage({ it.text.contains(text) }, init)
+
+    fun onMessage(
+        messageTextExactly: String,
+        init: @ChatMarker MessageProcessor<ChatContext?>,
+    ) = onMessage({ it.text == messageTextExactly }, init)
+
+    fun onMessage(init: @ChatMarker MessageProcessor<ChatContext?>) = onMessage({ true }, init)
+
+    fun onMessage(
+        predicate: (Message) -> Boolean,
+        init: @ChatMarker MessageProcessor<ChatContext?>,
+    ) = messageHandlers.add(MessageHandler(predicate, init))
+
+    inline fun <reified T : ChatContext?> into(init: IntoBuilder<T>.() -> Unit) {
+        val builder = IntoBuilder<T>()
+        builder.init()
+
+        for (entity in builder.build()) {
+            messageHandlers.add(entity)
+        }
+    }
+
+    inline infix fun <T : ChatContext?> T.into(init: IntoBuilder<T>.() -> Unit) {
+        val builder = IntoBuilder(this)
+        builder.init()
+
+        for (entity in builder.build()) {
+            messageHandlers.add(entity)
+        }
+    }
+
+    fun appliesTo(
+        message: Message,
+        context: ChatContext?,
+    ): Boolean = messageHandlers.any { it.appliesTo(message, context) }
+
+    fun process(
+        message: Message,
+        client: Client,
+        context: ChatContext?,
+        contextManager: ChatContextsManager?,
+    ) {
+        for (handler in messageHandlers) {
+            if (handler.appliesTo(message, context)) {
+                handler.process(
+                    message,
+                    client,
+                    context,
+                    contextManager,
+                )
+
+                return
+            }
+        }
+    }
+}
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/src/main/kotlin/chatbot/dsl/ChatBotImpl.kt ===
+package chatbot.dsl
+
+import chatbot.api.ChatBot
+import chatbot.api.ChatContextsManager
+import chatbot.api.Client
+import chatbot.api.LogLevel
+import chatbot.api.Message
+
+@Target(AnnotationTarget.TYPE, AnnotationTarget.CLASS)
+@DslMarker
+annotation class ChatMarker
+
+@ChatMarker
+class ChatBotImpl(
+    private val client: Client,
+    private var contextManager: ChatContextsManager? = null,
+    override var logLevel: LogLevel = LogLevel.ERROR,
+) : ChatBot {
+    private val behaviours = mutableListOf<Behaviour>()
+
+    override fun processMessages(message: Message) {
+        val chatId = message.chatId
+        val currentContext = contextManager?.getContext(chatId)
+
+        for (behavior in behaviours) {
+            if (behavior.appliesTo(message, currentContext)) {
+                behavior.process(message, client, currentContext, contextManager)
+                return
+            }
+        }
+    }
+
+    fun use(logLevel: LogLevel) {
+        this.logLevel = logLevel
+    }
+
+    operator fun LogLevel.unaryPlus() {
+        logLevel = this
+    }
+
+    fun use(context: ChatContextsManager) {
+        this.contextManager = context
+    }
+
+    fun behaviour(init: Behaviour.() -> Unit) {
+        val behaviour = Behaviour().apply(init)
+        behaviours.add(behaviour)
+    }
+}
+
+fun chatBot(
+    client: Client,
+    init: ChatBotImpl.() -> Unit,
+): ChatBotImpl {
+    val chatBot = ChatBotImpl(client)
+    return chatBot.apply(init)
+}
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/src/main/kotlin/chatbot/dsl/builder/IntoBuilder.kt ===
+package chatbot.dsl.builder
+
+import chatbot.api.ChatContext
+import chatbot.dsl.ChatMarker
+import chatbot.dsl.MessageProcessor
+import chatbot.dsl.handler.MessageHandler
+
+typealias HandlerType = MessageHandler<ChatContext?>
+
+@ChatMarker
+class IntoBuilder<C : ChatContext?>(
+    val exactContext: C? = null,
+) {
+    val messageHandlers: MutableList<MessageHandler<*>> = mutableListOf()
+
+    fun build(): MutableList<MessageHandler<ChatContext?>> {
+        return messageHandlers.filterIsInstance<HandlerType>().toMutableList()
+    }
+
+    inline fun <reified T : ChatContext?> (IntoBuilder<T>).onCommand(
+        command: String,
+        noinline init: MessageProcessor<T>,
+    ) {
+        val handler =
+            MessageHandler(
+                messagePredicate = { it.text.startsWith("/") && it.text.drop(1).startsWith(command) },
+                processor = init,
+                contextPredicate = { exactContext != null && it == exactContext || it is T },
+            )
+
+        messageHandlers.add(handler)
+    }
+
+    inline fun <reified T : ChatContext?> (IntoBuilder<T>).onMessage(
+        noinline messageProcessor: @ChatMarker MessageProcessor<T>,
+    ) {
+        val handler =
+            MessageHandler(
+                messagePredicate = { true },
+                processor = messageProcessor,
+                contextPredicate = { it is T },
+            )
+
+        messageHandlers.add(handler)
+    }
+}
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/src/main/kotlin/chatbot/dsl/builder/KeyboardBuilder.kt ===
+package chatbot.dsl.builder
+
+import chatbot.api.Keyboard
+
+class KeyboardBuilder {
+    // Если true, клавиатура скрывается после первого нажатия на любую кнопку
+    var oneTime: Boolean = false
+    var keyboard = mutableListOf<MutableList<Keyboard.Button>>()
+
+    fun row(init: RowBuilder.() -> Unit) {
+        val rowBuilder = RowBuilder()
+        rowBuilder.init()
+        keyboard.add(rowBuilder.buttons)
+    }
+
+    fun build(): Keyboard.Markup {
+        return Keyboard.Markup(oneTime, keyboard)
+    }
+}
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/src/main/kotlin/chatbot/dsl/builder/MessageBuilder.kt ===
+package chatbot.dsl.builder
+
+import chatbot.api.ChatContext
+import chatbot.api.ChatId
+import chatbot.api.Client
+import chatbot.api.Keyboard
+import chatbot.api.MessageId
+import chatbot.dsl.MessageProcessorContext
+
+class MessageBuilder(private val client: Client, private val chatId: ChatId) {
+    var text: String = ""
+    var replyTo: MessageId? = null
+    private var keyboard: Keyboard? = null
+
+    fun removeKeyboard() {
+        keyboard = Keyboard.Remove
+    }
+
+    fun withKeyboard(init: KeyboardBuilder.() -> Unit) {
+        val builder = KeyboardBuilder()
+        builder.init()
+        keyboard = builder.build()
+    }
+
+    fun send() {
+        val keyboardContent = (keyboard as? Keyboard.Markup)?.keyboard
+
+        if (text.isNotEmpty() || keyboard != null &&
+            keyboardContent?.any { it.isNotEmpty() } != false
+        ) {
+            client.sendMessage(chatId, text, keyboard, replyTo)
+        }
+    }
+}
+
+fun MessageProcessorContext<ChatContext?>.sendMessage(
+    chatId: ChatId,
+    init: MessageBuilder.() -> Unit,
+) {
+    val builder = MessageBuilder(this.client, chatId).apply(init)
+    builder.send()
+}
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/src/main/kotlin/chatbot/dsl/builder/RowBuilder.kt ===
+package chatbot.dsl.builder
+
+import chatbot.api.Keyboard
+
+class RowBuilder {
+    val buttons = mutableListOf<Keyboard.Button>()
+
+    operator fun String.unaryMinus() {
+        buttons.add(Keyboard.Button(text = this))
+    }
+
+    fun button(text: String) {
+        buttons.add(Keyboard.Button(text))
+    }
+}
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/src/main/kotlin/chatbot/dsl/handler/MessageHandler.kt ===
+package chatbot.dsl.handler
+
+import chatbot.api.ChatContext
+import chatbot.api.ChatContextsManager
+import chatbot.api.Client
+import chatbot.api.Message
+import chatbot.dsl.MessageProcessor
+import chatbot.dsl.MessageProcessorContext
+
+class MessageHandler<C : ChatContext?>(
+    val messagePredicate: (Message) -> Boolean,
+    val processor: MessageProcessor<C>,
+    val contextPredicate: ((ChatContext?) -> Boolean)? = null,
+) {
+    fun appliesTo(
+        other: Message,
+        context: ChatContext?,
+    ): Boolean {
+        return messagePredicate(other) && (contextPredicate?.invoke(context) ?: true)
+    }
+
+    fun process(
+        message: Message,
+        client: Client,
+        context: C,
+        contextManager: ChatContextsManager?,
+    ) {
+        if (appliesTo(message, context)) {
+            processor.invoke(
+                MessageProcessorContext(message, client, context) { newContext ->
+                    contextManager?.setContext(message.chatId, newContext)
+                },
+            )
+        }
+    }
+}
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/src/test/kotlin/chatbot/dsl/IncorrectContextTests.kt ===
+package chatbot.dsl
+
+import com.tschuchort.compiletesting.KotlinCompilation
+import com.tschuchort.compiletesting.SourceFile
+import org.intellij.lang.annotations.Language
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+
+class IncorrectContextTests {
+    @Test
+    fun testBehaviourInBehaviour() {
+        assertCompilationFails(
+            """
+            |import chatbot.dsl.*
+            |
+            |fun main() {
+            |    chatBot(TODO()) {
+            |        behaviour {
+            |            behaviour { }
+            |        }
+            |    }
+            |}
+            """.trimMargin(),
+        )
+    }
+
+    @Test
+    fun testBehaviourInOnMessage() {
+        assertCompilationFails(
+            """
+            |import chatbot.dsl.*
+            |
+            |fun main() {
+            |    chatBot(TODO()) {
+            |        behaviour {
+            |            onMessage {
+            |                behaviour { }
+            |            }
+            |        }
+            |    }
+            |}
+            """.trimMargin(),
+        )
+    }
+
+    @Test
+    fun testOnMessageInOnMessage() {
+        assertCompilationFails(
+            """
+            |import chatbot.dsl.*
+            |
+            |fun main() {
+            |    chatBot(TODO()) {
+            |        behaviour {
+            |            onMessage {
+            |                onMessage { }
+            |            }
+            |        }
+            |    }
+            |}
+            """.trimMargin(),
+        )
+    }
+
+    @Test
+    fun testContextIntoContext() {
+        assertCompilationFails(
+            """
+            |import chatbot.api.ChatContext
+            |import chatbot.dsl.*
+            |
+            |fun main() {
+            |    val context = object : ChatContext {}
+            |
+            |    chatBot(TODO()) {
+            |        behaviour {
+            |            context.into {
+            |                context.into { }
+            |            }
+            |        }
+            |    }
+            |}
+            """.trimMargin(),
+        )
+    }
+
+    @Test
+    fun testBehaviourIntoContext() {
+        assertCompilationFails(
+            """
+            |import chatbot.dsl.*
+            |import chatbot.api.ChatContext
+            |
+            |fun main() {
+            |    val context = object : ChatContext {}
+            |
+            |    chatBot(TODO()) {
+            |        behaviour {
+            |            context.into {
+            |                behaviour { }    
+            |            }
+            |        }
+            |    }
+            |}
+            """.trimMargin(),
+        )
+    }
+
+    @Test
+    fun testContextIntoOnCommand() {
+        assertCompilationFails(
+            """
+            |import chatbot.dsl.*
+            |import chatbot.api.ChatContext
+            |
+            |fun main() {
+            |    val context = object : ChatContext {}
+            |
+            |    chatBot(TODO()) {
+            |        behaviour {
+            |            onCommand("test") {
+            |                context.into { }
+            |            }
+            |        }
+            |    }
+            |}
+            """.trimMargin(),
+        )
+    }
+
+    private fun assertCompilationFails(
+        @Language(value = "kotlin") source: String,
+    ) {
+        val result = KotlinCompilation().apply {
+            jvmTarget = "11"
+            sources = listOf(SourceFile.kotlin("BadCode.kt", source))
+            inheritClassPath = true
+        }.compile()
+
+        Assertions.assertEquals(KotlinCompilation.ExitCode.COMPILATION_ERROR, result.exitCode)
+    }
+}
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/src/test/kotlin/chatbot/dsl/BaseTests.kt ===
+package chatbot.dsl
+
+import chatbot.api.*
+import chatbot.dsl.builder.sendMessage
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+
+class BaseTests {
+    private var testClient = TestClient()
+    private var chatContext = InMemoryContextsManager()
+
+    @BeforeEach
+    fun before() {
+        testClient = TestClient()
+        chatContext = InMemoryContextsManager()
+    }
+
+    private fun assertMessage(
+        expectedCharId: Long,
+        expectedText: String,
+        expectedKeyboard: Keyboard? = null,
+        expectedReplyMessageId: MessageId? = null,
+    ) {
+        val messages = testClient.pullMessages()
+        Assertions.assertEquals(1, messages.size)
+
+        val message = messages.single()
+        Assertions.assertEquals(ChatId.Id(expectedCharId), message.chatId)
+        Assertions.assertEquals(expectedText, message.text)
+        Assertions.assertEquals(expectedKeyboard, message.keyboard)
+        Assertions.assertEquals(expectedReplyMessageId, message.replyMessageId)
+    }
+
+    private fun assertNoMessages() {
+        val messages = testClient.pullMessages()
+        Assertions.assertTrue(messages.isEmpty())
+    }
+
+    @Test
+    fun simpleChatBot() {
+        val bot = chatBot(testClient) {
+            use(LogLevel.INFO)
+
+            behaviour {
+                onCommand("help") {
+                    client.sendMessage(message.chatId, "I need help too")
+                }
+
+                onMessage {
+                    client.sendMessage(message.chatId, "hello, user", replyMessageId = message.id)
+                }
+            }
+        }
+
+        Assertions.assertEquals(LogLevel.INFO, bot.logLevel)
+
+        bot.processMessages(TEST_MESSAGE_1)
+        assertMessage(42, "hello, user", expectedReplyMessageId = TEST_MESSAGE_1.id)
+
+        bot.processMessages(TEST_MESSAGE_HELP)
+        assertMessage(11, "I need help too")
+    }
+
+    @Test
+    fun messageBuilder() {
+        val bot = chatBot(testClient) {
+            behaviour {
+                onMessage("removeKeyboard") {
+                    sendMessage(message.chatId) {
+                        removeKeyboard()
+                    }
+                }
+
+                onMessage("manualSetKeyboard") {
+                    sendMessage(message.chatId) {
+                        withKeyboard {
+                            keyboard = mutableListOf(
+                                mutableListOf(Keyboard.Button(text = "1:1"), Keyboard.Button(text = "1:2")),
+                            )
+                            keyboard += mutableListOf(Keyboard.Button(text = "2:1"))
+                            keyboard.last() += Keyboard.Button(text = "2:2")
+                        }
+                    }
+                }
+
+                onMessage("buildKeyboard") {
+                    sendMessage(message.chatId) {
+                        withKeyboard {
+                            oneTime = true
+                            row {
+                                button(text = "1:1")
+                                button(text = "1:2")
+                            }
+
+                            row {
+                                -"2:1"
+                                -"2:2"
+                            }
+                        }
+                    }
+                }
+
+                onMessage("allEmpty") {
+                    sendMessage(message.chatId) { }
+                }
+
+                onMessage("emptyKeyboard") {
+                    sendMessage(message.chatId) {
+                        withKeyboard { }
+                    }
+                }
+
+                onMessage("emptyKeyboardSet") {
+                    sendMessage(message.chatId) {
+                        withKeyboard {
+                            keyboard = mutableListOf(mutableListOf<Keyboard.Button>())
+                        }
+                    }
+                }
+
+                onMessage("emptyKeyboardBuild") {
+                    sendMessage(message.chatId) {
+                        withKeyboard {
+                            row {}
+                            row {}
+                        }
+                    }
+                }
+
+                onMessage {
+                    sendMessage(message.chatId) {
+                        text = "hello, user"
+                        replyTo = message.id
+                    }
+                }
+            }
+        }
+
+        Assertions.assertEquals(LogLevel.ERROR, bot.logLevel)
+
+        bot.processMessages(TEST_MESSAGE_1)
+        assertMessage(42, "hello, user", expectedReplyMessageId = TEST_MESSAGE_1.id)
+
+        bot.sendText("removeKeyboard")
+        assertMessage(1, "", expectedKeyboard = Keyboard.Remove)
+
+        bot.sendText("manualSetKeyboard")
+        assertMessage(
+            1,
+            "",
+            expectedKeyboard = Keyboard.Markup(
+                oneTime = false,
+                keyboard = listOf(
+                    listOf(Keyboard.Button(text = "1:1"), Keyboard.Button(text = "1:2")),
+                    listOf(Keyboard.Button(text = "2:1"), Keyboard.Button(text = "2:2")),
+                ),
+            ),
+        )
+
+        bot.sendText("buildKeyboard")
+        assertMessage(
+            1,
+            "",
+            expectedKeyboard = Keyboard.Markup(
+                oneTime = true,
+                keyboard = listOf(
+                    listOf(Keyboard.Button(text = "1:1"), Keyboard.Button(text = "1:2")),
+                    listOf(Keyboard.Button(text = "2:1"), Keyboard.Button(text = "2:2")),
+                ),
+            ),
+        )
+
+        bot.sendText("allEmpty")
+        assertNoMessages()
+
+        bot.sendText("emptyKeyboard")
+        assertNoMessages()
+
+        bot.sendText("emptyKeyboardSet")
+        assertNoMessages()
+
+        bot.sendText("emptyKeyboardBuild")
+        assertNoMessages()
+    }
+
+    @Test
+    fun setupLogLevelUsingPlus() {
+        Assertions.assertEquals(
+            LogLevel.INFO,
+            chatBot(testClient) { +LogLevel.INFO }.logLevel,
+        )
+        Assertions.assertEquals(
+            LogLevel.ERROR,
+            chatBot(testClient) { +LogLevel.ERROR }.logLevel,
+        )
+    }
+
+    @Test
+    fun setupLogLevelUsingUse() {
+        Assertions.assertEquals(
+            LogLevel.INFO,
+            chatBot(testClient) { use(LogLevel.INFO) }.logLevel,
+        )
+        Assertions.assertEquals(
+            LogLevel.ERROR,
+            chatBot(testClient) { use(LogLevel.ERROR) }.logLevel,
+        )
+    }
+
+    @Test
+    fun basicBehaviourCommands() {
+        val bot = chatBot(testClient) {
+            behaviour {
+                onMessage({ message -> message.text == "ultra_secret_command" }) {
+                    client.sendMessage(message.chatId, "my password in 777")
+                }
+
+                onCommand("start") {
+                    client.sendMessage(message.chatId, "Lets start!")
+                }
+
+                onMessage("secret_key") {
+                    client.sendMessage(message.chatId, "You really know it?")
+                }
+
+                onMessagePrefix("start using dsl") {
+                    client.sendMessage(message.chatId, "Ok, it's easy")
+                }
+
+                onMessageContains("plagiarize") {
+                    client.sendMessage(message.chatId, "ban")
+                }
+
+                onMessage {
+                    client.sendMessage(message.chatId, "???")
+                }
+
+                onCommand("help") {
+                    client.sendMessage(message.chatId, "Message should not being send")
+                }
+            }
+        }
+
+        Assertions.assertEquals(LogLevel.ERROR, bot.logLevel)
+
+        bot.sendText("ultra_secret_command")
+        assertMessage(1, "my password in 777")
+
+        bot.sendText("/start")
+        assertMessage(1, "Lets start!")
+
+        bot.sendText("secret_key")
+        assertMessage(1, "You really know it?")
+
+        bot.sendText("secret_key ")
+        assertMessage(1, "???")
+
+        bot.sendText(" secret_key")
+        assertMessage(1, "???")
+
+        bot.sendText("start using dsl today")
+        assertMessage(1, "Ok, it's easy")
+
+        bot.sendText("start using dsl")
+        assertMessage(1, "Ok, it's easy")
+
+        bot.sendText("plagiarize")
+        assertMessage(1, "ban")
+
+        bot.sendText("ask group mate to plagiarize solution")
+        assertMessage(1, "ban")
+
+        bot.sendText("/help")
+        assertMessage(1, "???")
+    }
+
+    object AskNameContext : ChatContext
+    class WithNameContext(val name: String) : ChatContext
+
+    @Test
+    fun userNameContext() {
+        val bot = chatBot(testClient) {
+            use(chatContext)
+
+            behaviour {
+                into<WithNameContext> {
+                    onCommand("change_name") {
+                        client.sendMessage(message.chatId, "Say your new name")
+                        setContext(AskNameContext)
+                    }
+
+                    onMessage {
+                        client.sendMessage(message.chatId, "Hello, ${this.context.name}!")
+                    }
+                }
+
+                AskNameContext into {
+                    onMessage {
+                        client.sendMessage(message.chatId, "ok")
+                        setContext(WithNameContext(message.text))
+                    }
+                }
+
+                onCommand("start") {
+                    client.sendMessage(message.chatId, "Hello! Say your name!")
+                    setContext(AskNameContext)
+                }
+            }
+        }
+
+        bot.sendText("/start")
+        assertMessage(1L, "Hello! Say your name!")
+
+        bot.sendText("Kotlin Student")
+        assertMessage(1L, "ok")
+
+        bot.sendText("/start")
+        assertMessage(1L, "Hello, Kotlin Student!")
+
+        bot.sendText("test")
+        assertMessage(1L, "Hello, Kotlin Student!")
+
+        bot.sendText("/change_name")
+        assertMessage(1L, "Say your new name")
+
+        bot.sendText("New Name")
+        assertMessage(1L, "ok")
+
+        bot.sendText("test")
+        assertMessage(1L, "Hello, New Name!")
+
+        bot.sendText("/start")
+        assertMessage(1L, "Hello, New Name!")
+    }
+
+    private fun ChatBot.sendText(text: String) {
+        processMessages(
+            Message(
+                id = 1,
+                chatId = ChatId.Id(1),
+                text = text,
+            ),
+        )
+    }
+
+    companion object {
+        class TestClient : Client {
+            data class SendMessageInfo(
+                val chatId: ChatId,
+                val text: String,
+                val keyboard: Keyboard?,
+                val replyMessageId: MessageId?,
+            )
+
+            private val messages = mutableListOf<SendMessageInfo>()
+
+            fun pullMessages(): List<SendMessageInfo> {
+                val messages = this.messages.toList()
+                this.messages.clear()
+                return messages
+            }
+
+            override fun sendMessage(chatId: ChatId, text: String, keyboard: Keyboard?, replyMessageId: MessageId?) {
+                messages.add(SendMessageInfo(chatId, text, keyboard, replyMessageId))
+            }
+        }
+
+        class InMemoryContextsManager : ChatContextsManager {
+            private val data = mutableMapOf<Long, ChatContext?>()
+
+            override fun getContext(chatId: ChatId): ChatContext? {
+                return (chatId as? ChatId.Id)?.run { data[id] }
+            }
+
+            override fun setContext(chatId: ChatId, newState: ChatContext?) {
+                (chatId as? ChatId.Id)?.run {
+                    data[id] = newState
+                }
+            }
+        }
+
+        val TEST_MESSAGE_1 = Message(
+            id = 123L,
+            chatId = ChatId.Id(42),
+            text = "hello, bot",
+        )
+        val TEST_MESSAGE_HELP = Message(
+            id = 124L,
+            chatId = ChatId.Id(11),
+            text = "/help me",
+        )
+    }
+}
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/scr.bash ===
+#!/bin/bash
+
+# Переменная для хранения имени выходного файла
+OUTPUT_FILE="directory_structure.txt"
+
+# Вывод структуры текущей директории с помощью ls -a и tree -a
+{
+  echo "=== Структура каталога (ls -a) ==="
+  ls -a
+  echo ""
+  
+  echo "=== Структура каталога (tree -a) ==="
+  tree -a
+  echo ""
+} > "$OUTPUT_FILE"
+
+# Рекурсивный проход по всем файлам и каталогам в текущей директории
+find "$(pwd)" -type f | while read -r file; do
+  # Проверяем, является ли файл небинарным
+  if file "$file" | grep -q "text"; then
+    {
+      echo "=== Содержимое файла: $file ==="
+      cat "$file"
+      echo ""
+    } >> "$OUTPUT_FILE"
+  fi
+done
+
+echo "Результат записан в файл $OUTPUT_FILE"
+
+=== Содержимое файла: /home/gs0xa19f2/Documents/ITMO/Kotlin/ChatBotDSL/directory_structure.txt ===
+
